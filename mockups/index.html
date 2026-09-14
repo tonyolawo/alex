@@ -63,16 +63,17 @@
 
     /* hero channel grid */
     .hero { width: 100%; max-width: 980px; }
-    .channel-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    .channel-grid { width: 100%; max-width: 980px; padding-bottom: 20px; }
+    .channel-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 14px;
-      width: 100%;
-      max-width: 980px;
-      padding-bottom: 20px;
+      margin-bottom: 14px;
     }
-    @media (max-width: 720px) {
-      .channel-grid { grid-template-columns: repeat(2, 1fr); }
+    .channel-row .hub-card {
+      width: 300px;
+      max-width: 100%;
     }
   </style>
 </head>
@@ -98,40 +99,48 @@
 
     <div class="channel-grid">
 
-      <a class="hub-card" href="channels/web.html">
-        <div class="hc-icon web">W</div>
-        <span class="hc-tag">Standalone</span>
-        <h3>Web chat</h3>
-        <p>Full browser chat with sidebar dashboard, KPIs, recent invoices, and live conversation.</p>
-      </a>
+      <div class="channel-row">
 
-      <a class="hub-card" href="channels/mobile.html">
-        <div class="hc-icon mob">M</div>
-        <span class="hc-tag">Standalone</span>
-        <h3>Mobile app</h3>
-        <p>Mobile-first chat UI. Push-style notifications, quick reply chips, and streamlined flows.</p>
-      </a>
+        <a class="hub-card" href="channels/web.html">
+          <div class="hc-icon web">W</div>
+          <span class="hc-tag">Standalone</span>
+          <h3>Web chat</h3>
+          <p>Full browser chat with sidebar dashboard, KPIs, recent invoices, and live conversation.</p>
+        </a>
 
-      <a class="hub-card" href="channels/whatsapp.html">
-        <div class="hc-icon wa">WA</div>
-        <span class="hc-tag">Integration</span>
-        <h3>WhatsApp</h3>
-        <p>Interactive buttons, numbered menus, read receipts, and WhatsApp-native conversation style.</p>
-      </a>
+        <a class="hub-card" href="channels/mobile.html">
+          <div class="hc-icon mob">M</div>
+          <span class="hc-tag">Standalone</span>
+          <h3>Mobile app</h3>
+          <p>Mobile-first chat UI. Push-style notifications, quick reply chips, and streamlined flows.</p>
+        </a>
 
-      <a class="hub-card" href="channels/telegram.html">
-        <div class="hc-icon tg">TG</div>
-        <span class="hc-tag">Integration</span>
-        <h3>Telegram</h3>
-        <p>Bot commands, inline keyboards, deep links, and rich card layouts.</p>
-      </a>
+      </div>
 
-      <a class="hub-card" href="channels/sms.html">
-        <div class="hc-icon sms">SMS</div>
-        <span class="hc-tag">Integration</span>
-        <h3>SMS</h3>
-        <p>Text-only numbered menus, keyword commands, and short-link responses for feature reach.</p>
-      </a>
+      <div class="channel-row">
+
+        <a class="hub-card" href="channels/whatsapp.html">
+          <div class="hc-icon wa">WA</div>
+          <span class="hc-tag">Integration</span>
+          <h3>WhatsApp</h3>
+          <p>Interactive buttons, numbered menus, read receipts, and WhatsApp-native conversation style.</p>
+        </a>
+
+        <a class="hub-card" href="channels/telegram.html">
+          <div class="hc-icon tg">TG</div>
+          <span class="hc-tag">Integration</span>
+          <h3>Telegram</h3>
+          <p>Bot commands, inline keyboards, deep links, and rich card layouts.</p>
+        </a>
+
+        <a class="hub-card" href="channels/sms.html">
+          <div class="hc-icon sms">SMS</div>
+          <span class="hc-tag">Integration</span>
+          <h3>SMS</h3>
+          <p>Text-only numbered menus, keyword commands, and short-link responses for feature reach.</p>
+        </a>
+
+      </div>
 
     </div>
   </section>
