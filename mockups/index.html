@@ -8,9 +8,9 @@
   <link rel="stylesheet" href="css/theme-casual.css" />
   <link rel="stylesheet" href="css/chat-base.css" />
   <style>
-    body.page { padding: 0 18px 24px; align-items: flex-start; padding-top: 0; }
-    .lp-nav { margin: 0 -18px 0; }
-    .hub-head { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; padding-top: 28px; text-align: center; width: 100%; max-width: 980px; }
+    body.page { display: block; min-height: 100vh; padding: 0; gap: 0; }
+    .lp-nav { margin: 0; }
+    .hub-head { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; padding-top: 28px; text-align: center; width: 100%; max-width: 980px; margin: 0 auto; }
     .hub-head .h1-wrap h1 { margin: 0; }
     .hub-head .h1-wrap p { margin: 6px 0 0; }
     .hub-card .hc-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; color: #fff; }
@@ -19,7 +19,7 @@
     .hc-icon.sms  { background: #4a5568; }
     .hc-icon.web  { background: var(--primary); }
     .hc-icon.mob  { background: var(--accent); }
-    .hub-footer { max-width: 980px; width: 100%; padding: 8px 0 20px; }
+    .hub-footer { max-width: 980px; width: 100%; padding: 8px 0 20px; margin: 0 auto; }
     .hub-footer p { font-size: 12px; color: var(--muted); }
 
     /* sticky top bar — same as landing page */
@@ -87,8 +87,8 @@
     }
 
     /* hero channel grid */
-    .hero { width: 100%; max-width: 980px; }
-    .channel-grid { width: 100%; max-width: 980px; padding-bottom: 20px; }
+    .hero { width: 100%; max-width: 980px; margin: 0 auto; }
+    .channel-grid { width: 100%; max-width: 980px; padding: 0 0 20px; margin: 0 auto; }
     .channel-row {
       display: flex;
       flex-wrap: wrap;
