@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="css/theme-casual.css" />
   <link rel="stylesheet" href="css/chat-base.css" />
   <style>
-    body.page { padding: 24px 18px; align-items: flex-start; }
-    .hub-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    body.page { padding: 0 18px 24px; align-items: flex-start; }
+    .hub-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 28px; }
     .hub-head .h1-wrap h1 { margin: 0; }
     .hub-head .h1-wrap p { margin: 6px 0 0; }
     .hub-card .hc-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; color: #fff; }
@@ -20,56 +20,122 @@
     .hc-icon.mob  { background: var(--accent); }
     .hub-footer { max-width: 980px; width: 100%; padding: 8px 0 20px; }
     .hub-footer p { font-size: 12px; color: var(--muted); }
+
+    /* sticky top bar */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      width: 100%;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+    .site-header .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+    .brand-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--primary); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 15px;
+    }
+    .brand-name { font-weight: 800; font-size: 17px; letter-spacing: -0.01em; }
+    .site-header .theme-toggle {
+      display: flex; align-items: center; gap: 10px;
+      background: none; border: none; padding: 0; cursor: pointer;
+      color: var(--text); font-family: var(--font); font-size: 13px; font-weight: 600;
+    }
+    .switch-track {
+      width: 44px; height: 26px; border-radius: 999px;
+      background: var(--border); display: inline-flex; align-items: center; padding: 3px;
+      transition: background 0.15s ease;
+    }
+    .switch-thumb {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+      transition: transform 0.15s ease;
+    }
+    .theme-toggle.is-on .switch-track { background: var(--primary); }
+    .theme-toggle.is-on .switch-thumb { transform: translateX(18px); }
+
+    /* hero channel grid */
+    .hero { width: 100%; max-width: 980px; }
+    .channel-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      width: 100%;
+      max-width: 980px;
+      padding-bottom: 20px;
+    }
+    @media (max-width: 720px) {
+      .channel-grid { grid-template-columns: repeat(2, 1fr); }
+    }
   </style>
 </head>
 <body class="page">
 
-  <div class="hub-head">
-    <div class="h1-wrap">
-      <h1>Alex — chat mockups</h1>
-      <p>Five-channel chat app for small business finance. Interactive demos with sample data.</p>
+  <header class="site-header" id="top">
+    <a class="brand" href="#top">
+      <div class="brand-avatar">A</div>
+      <span class="brand-name">Alex</span>
+    </a>
+    <button class="theme-toggle" id="themeSwitch" role="switch" aria-checked="false" aria-label="Toggle theme">
+      <span class="switch-track"><span class="switch-thumb"></span></span>
+      <span class="switch-label">Fintech theme</span>
+    </button>
+  </header>
+
+  <section class="hero">
+    <div class="hub-head">
+      <div class="h1-wrap">
+        <h1>Alex — chat mockups</h1>
+        <p>Five-channel chat app for small business finance. Interactive demos with sample data.</p>
+      </div>
     </div>
-    <button class="theme-toggle" id="themeToggle">Switch: Casual theme</button>
-  </div>
 
-  <div class="hub-grid">
+    <div class="channel-grid">
 
-    <a class="hub-card" href="channels/web.html">
-      <div class="hc-icon web">W</div>
-      <span class="hc-tag">Standalone</span>
-      <h3>Web chat</h3>
-      <p>Full browser chat with sidebar dashboard, KPIs, recent invoices, and live conversation.</p>
-    </a>
+      <a class="hub-card" href="channels/web.html">
+        <div class="hc-icon web">W</div>
+        <span class="hc-tag">Standalone</span>
+        <h3>Web chat</h3>
+        <p>Full browser chat with sidebar dashboard, KPIs, recent invoices, and live conversation.</p>
+      </a>
 
-    <a class="hub-card" href="channels/mobile.html">
-      <div class="hc-icon mob">M</div>
-      <span class="hc-tag">Standalone</span>
-      <h3>Mobile app</h3>
-      <p>Mobile-first chat UI. Push-style notifications, quick reply chips, and streamlined flows.</p>
-    </a>
+      <a class="hub-card" href="channels/mobile.html">
+        <div class="hc-icon mob">M</div>
+        <span class="hc-tag">Standalone</span>
+        <h3>Mobile app</h3>
+        <p>Mobile-first chat UI. Push-style notifications, quick reply chips, and streamlined flows.</p>
+      </a>
 
-    <a class="hub-card" href="channels/whatsapp.html">
-      <div class="hc-icon wa">WA</div>
-      <span class="hc-tag">Integration</span>
-      <h3>WhatsApp</h3>
-      <p>Interactive buttons, numbered menus, read receipts, and WhatsApp-native conversation style.</p>
-    </a>
+      <a class="hub-card" href="channels/whatsapp.html">
+        <div class="hc-icon wa">WA</div>
+        <span class="hc-tag">Integration</span>
+        <h3>WhatsApp</h3>
+        <p>Interactive buttons, numbered menus, read receipts, and WhatsApp-native conversation style.</p>
+      </a>
 
-    <a class="hub-card" href="channels/telegram.html">
-      <div class="hc-icon tg">TG</div>
-      <span class="hc-tag">Integration</span>
-      <h3>Telegram</h3>
-      <p>Bot commands, inline keyboards, deep links, and rich card layouts.</p>
-    </a>
+      <a class="hub-card" href="channels/telegram.html">
+        <div class="hc-icon tg">TG</div>
+        <span class="hc-tag">Integration</span>
+        <h3>Telegram</h3>
+        <p>Bot commands, inline keyboards, deep links, and rich card layouts.</p>
+      </a>
 
-    <a class="hub-card" href="channels/sms.html">
-      <div class="hc-icon sms">SMS</div>
-      <span class="hc-tag">Integration</span>
-      <h3>SMS</h3>
-      <p>Text-only numbered menus, keyword commands, and short-link responses for feature reach.</p>
-    </a>
+      <a class="hub-card" href="channels/sms.html">
+        <div class="hc-icon sms">SMS</div>
+        <span class="hc-tag">Integration</span>
+        <h3>SMS</h3>
+        <p>Text-only numbered menus, keyword commands, and short-link responses for feature reach.</p>
+      </a>
 
-  </div>
+    </div>
+  </section>
 
   <div class="hub-footer">
     <p>All data shown is simulated. The demo covers invoicing, sales reports, stock alerts, customer lookup, tax compliance (KRA eTIMS), and storefront orders.</p>
@@ -78,7 +144,33 @@
   <script src="data/demo.js"></script>
   <script src="js/chat-ui.js"></script>
   <script>
-    setTheme(currentTheme());
+    (function () {
+      var sw = document.getElementById('themeSwitch');
+      var lbl = document.querySelector('.switch-label');
+
+      function applyTheme(t) {
+        var casual = t === 'casual';
+        if (sw) {
+          sw.setAttribute('aria-checked', casual ? 'true' : 'false');
+          sw.classList.toggle('is-on', casual);
+        }
+        if (lbl) lbl.textContent = casual ? 'Casual theme' : 'Fintech theme';
+      }
+
+      if (window.AlexChat) {
+        AlexChat.setTheme(AlexChat.currentTheme());
+        applyTheme(document.documentElement.getAttribute('data-theme'));
+      }
+
+      if (sw) {
+        sw.addEventListener('click', function () {
+          if (window.AlexChat) AlexChat.toggleTheme();
+          applyTheme(document.documentElement.getAttribute('data-theme'));
+        });
+      }
+
+      document.addEventListener('alex-theme', function (e) { applyTheme(e.detail); });
+    })();
   </script>
 
 </body>
