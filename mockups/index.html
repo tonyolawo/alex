@@ -21,30 +21,35 @@
     .hub-footer { max-width: 980px; width: 100%; padding: 8px 0 20px; }
     .hub-footer p { font-size: 12px; color: var(--muted); }
 
-    /* sticky top bar */
-    .site-header {
+    /* sticky top bar — same as landing page */
+    .lp-nav {
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 100;
       width: 100%;
-      height: 64px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 18px;
-      background: #fff;
+      gap: 16px;
+      background: var(--surface);
       border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
     }
-    .site-header .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+    .lp-nav .brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; flex-shrink: 0; }
     .brand-avatar {
-      width: 32px; height: 32px; border-radius: 50%;
+      width: 28px; height: 28px; border-radius: 50%;
       background: var(--primary); color: #fff;
       display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 15px;
+      font-weight: 700; font-size: 13px;
     }
-    .brand-name { font-weight: 800; font-size: 17px; letter-spacing: -0.01em; }
-    .site-header .theme-toggle {
-      display: flex; align-items: center; gap: 10px;
+    .brand-name { font-weight: 700; font-size: 16px; color: var(--text); }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--primary); }
+    .header-right { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+    .header-right .theme-toggle {
+      display: flex; align-items: center; gap: 8px;
       background: none; border: none; padding: 0; cursor: pointer;
       color: var(--text); font-family: var(--font); font-size: 13px; font-weight: 600;
     }
@@ -60,6 +65,25 @@
     }
     .theme-toggle.is-on .switch-track { background: var(--primary); }
     .theme-toggle.is-on .switch-thumb { transform: translateX(18px); }
+    .btn {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      line-height: 1.4;
+      transition: background .2s;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-strong, #085b47); }
+    @media (max-width: 720px) {
+      .nav-links { display: none; }
+      .switch-label { display: none; }
+    }
 
     /* hero channel grid */
     .hero { width: 100%; max-width: 980px; }
@@ -79,15 +103,24 @@
 </head>
 <body class="page">
 
-  <header class="site-header" id="top">
-    <a class="brand" href="#top">
+  <header class="lp-nav" id="top">
+    <a class="brand" href="../index.html#top">
       <div class="brand-avatar">A</div>
       <span class="brand-name">Alex</span>
     </a>
-    <button class="theme-toggle" id="themeSwitch" role="switch" aria-checked="false" aria-label="Toggle theme">
-      <span class="switch-track"><span class="switch-thumb"></span></span>
-      <span class="switch-label">Fintech theme</span>
-    </button>
+    <nav class="nav-links">
+      <a href="../index.html#features">Features</a>
+      <a href="../index.html#how">How it works</a>
+      <a href="../index.html#channels">Channels</a>
+      <a href="../index.html#faq">FAQ</a>
+    </nav>
+    <div class="header-right">
+      <button class="theme-toggle" id="themeSwitch" role="switch" aria-checked="false" aria-label="Toggle theme">
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+        <span class="switch-label">Fintech theme</span>
+      </button>
+      <a href="../index.html#join" class="btn btn-primary js-waitlist">Join the waitlist</a>
+    </div>
   </header>
 
   <section class="hero">
