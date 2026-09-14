@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alex — Telegram Chat</title>
+  <link rel="stylesheet" href="../css/theme-fintech.css" />
+  <link rel="stylesheet" href="../css/theme-casual.css" />
+  <link rel="stylesheet" href="../css/chat-base.css" />
+  <style>
+    .app { max-width: 420px; height: calc(100vh - 24px); border-radius: var(--radius-lg); }
+    .chat-header { background: #2aabee; color: #fff; }
+    .chat-header .avatar { background: #1c9adb; color: #fff; }
+    .chat-header .state { opacity: 0.85; }
+    .chat-body { background: #fff; }
+    .msg-bot { background: #fff; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+    .msg-user { background: #e1f5fe; border: 1px solid #b3e5fc; }
+    .bot-cmd { display: inline-block; background: #fff; border: 1px solid #d0e6f5; color: #2aabee; border-radius: 8px; padding: 2px 8px; font-size: 12px; font-weight: 600; }
+    .cards-wrap { display: flex; flex-direction: column; gap: 10px; }
+    .tg-keys { align-self: flex-start; display: flex; flex-direction: column; gap: 6px; max-width: 92%; }
+    .chat-input { background: #f0f0f0; border-top-color: #e0e0e0; }
+    .chat-input input { border: none; background: #fff; border-radius: 10px; }
+    .chat-input .send { background: #2aabee; color: #fff; border-radius: 10px; width: auto; padding: 0 16px; font-size: 13px; height: 40px; }
+  </style>
+</head>
+<body class="page">
+
+  <div class="app">
+
+    <div class="chat-header">
+      <div class="avatar">A</div>
+      <div class="identity">
+        <div class="name">Alex <span class="bot-cmd">bot</span></div>
+        <div class="state">Rainbow Hardware · online</div>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle">Theme</button>
+      </div>
+    </div>
+
+    <div class="chat-body"></div>
+
+    <div class="chat-input">
+      <input type="text" placeholder="Type /help..." />
+      <button class="send">Send</button>
+    </div>
+
+  </div>
+
+  <script src="../data/demo.js"></script>
+  <script src="../js/chat-ui.js"></script>
+  <script>
+    (function () {
+      var D = DEMO;
+      var UI = AlexChat.UI.init({
+        sender: 'Alex',
+        onText: function (text) {
+          var t = text.toLowerCase().trim();
+          if (/^\/start/.test(t)) return start();
+          if (/^\/invoice|invoice|create|bill/.test(t)) return createInvoice();
+          if (/^\/report|report|sales|profit/.test(t)) return salesReport();
+          if (/^\/stock|stock|inventory/.test(t)) return stockAlert();
+          if (/^\/customer|customer|profile/.test(t)) return customerLookup();
+          if (/^\/tax|tax|filing|vat|etims/.test(t)) return taxFiling();
+          if (/^\/store|store|storefront|orders/.test(t)) return storeFront();
+          if (/^\/help|help|menu/.test(t)) return mainMenu();
+          UI.user(text);
+          UI.say('I did not understand that. Try ' + '/help' + ' to see commands.', { delay: 400, tg: kbMenu() });
+        }
+      });
+
+      function kbMenu() {
+        return [
+          [{ label: 'New invoice', action: createInvoice }, { label: 'Report', action: salesReport }],
+          [{ label: 'Stock', action: stockAlert }, { label: 'Customers', action: customerLookup }],
+          [{ label: 'Tax & eTIMS', action: taxFiling }, { label: 'Storefront', action: storeFront }]
+        ];
+      }
+
+      UI.pill('Today');
+      UI.user('/start');
+      UI.say('Welcome back, Amina. I am Alex for **Rainbow Hardware**.\nI can handle invoices, reports, stock, customers, VAT filing, and your storefront. Tap a button or use commands like /invoice.', { delay: 700, tg: kbMenu() });
+
+      function start() {
+        UI.say('Main menu.', { delay: 300, tg: kbMenu() });
+      }
+      function mainMenu() {
+        UI.say('Main menu — tap an option.', { delay: 300, tg: kbMenu() });
+      }
+
+      /* invoice */
+      function createInvoice() {
+        UI.say('Invoice creation — step 1: who is the customer?', { delay: 300,
+          tg: [[{ label: 'Bora Builders Ltd', action: function () { invItems('Bora Builders Ltd'); } }],
+              [{ label: 'Faith Njoroge', action: function () { invItems('Faith Njoroge'); } }],
+              [{ label: 'Kijabe Traders', action: function () { invItems('Kijabe Traders'); } }],
+              [{ label: 'Cancel', action: mainMenu }]]
+        });
+      }
+      function invItems(cust) {
+        UI.say('Invoice for **' + cust + '** — step 2: pick an item.', { delay: 300,
+          tg: [[{ label: 'Cement (50kg bag)', action: function () { invQty(cust, D.items[0]); } }],
+              [{ label: 'GI Iron Sheet', action: function () { invQty(cust, D.items[1]); } }],
+              [{ label: 'PVC Pipe 6m', action: function () { invQty(cust, D.items[4]); } }],
+              [{ label: 'Cancel', action: mainMenu }]]
+        });
+      }
+      function invQty(cust, item) {
+        UI.say('Quantity for **' + item.name + '**:', { delay: 250,
+          tg: [[{ label: 'x1', action: function () { invConfirm(cust, item, 1); } }, { label: 'x2', action: function () { invConfirm(cust, item, 2); } }, { label: 'x5', action: function () { invConfirm(cust, item, 5); } }],
+              [{ label: 'Cancel', action: mainMenu }]]
+        });
+      }
+      function invConfirm(cust, item, qty) {
+        var line = qty * item.price, vat = Math.round(line * 0.16), total = line + vat;
+        UI.say('Confirm invoice:', { delay: 400,
+          cards: [{ kind: 'invoice', data: { id: 'INV-2026-0153', customer: cust, items: [{ name: item.name, qty: qty, line: line }], vat: vat, total: total, status: 'pending' }}],
+          tg: [[{ label: 'Send to KRA eTIMS', cls: 'primary', action: function () { invSent(cust, 'INV-2026-0153', total); } }, { label: 'Cancel', action: mainMenu }]]
+        });
+      }
+      function invSent(cust, invId, total) {
+        UI.say(invId + ' sent to eTIMS.', { delay: 600,
+          cards: [{ kind: 'status', data: { title: invId, sub: cust, cls: 'pending', tag: 'Pending', rows: [{ k: 'Amount', v: D.fmtKES(total) }], note: 'eTIMS serial assigned.' }}],
+          tg: [[{ label: 'Mark fulfilled', action: function () { invPaid(invId, cust, total); } }, { label: 'Main menu', action: mainMenu }]]
+        });
+      }
+      function invPaid(invId, cust, total) {
+        UI.say('Fulfilled. Payment received.', { delay: 500,
+          cards: [{ kind: 'receipt', data: { title: 'Payment received', sub: invId + ' — ' + cust, mpesa: 'QGK72K3M1Q', amount: total, etims: 'ETI-2026-01455' }}]
+        });
+        setTimeout(function () { UI.say('Anything else?', { delay: 500, tg: kbMenu() }); }, 800);
+      }
+
+      /* reports */
+      function salesReport() {
+        UI.say('Choose a report:', { delay: 300,
+          tg: [[{ label: 'This week', action: weekReport }, { label: 'This month', action: monthReport }],
+              [{ label: 'Profit & Loss', action: pAndL }, { label: 'Main menu', action: mainMenu }]]
+        });
+      }
+      function weekReport() {
+        UI.say('Sales — this week.', { delay: 500,
+          cards: [{ kind: 'report', data: { title: 'Sales — Sep 8 to 14', rows: [{ name: 'Cement', amount: 136000 }, { name: 'GI Iron Sheet', amount: 230000 }, { name: 'PVC Pipe', amount: 14400 }], total: D.week.amount, note: D.week.count + ' items sold.' }}],
+          tg: [[{ label: 'Profit & Loss', action: pAndL }, { label: 'Main menu', action: mainMenu }]]
+        });
+      }
+      function monthReport() {
+        UI.say('September to date.', { delay: 500,
+          cards: [{ kind: 'report', data: { title: 'Sales — Sep 1 to 14', rows: D.items.map(function (it, i) { return { name: it.name, amount: [1520000, 1280000, 41000, 42000, 39000, 9200][i] }; }), total: D.month.amount, note: D.month.count + ' items sold.' }}],
+          tg: [[{ label: 'Profit & Loss', action: pAndL }, { label: 'Main menu', action: mainMenu }]]
+        });
+      }
+      function pAndL() {
+        UI.say('Profit & Loss for September.', { delay: 600,
+          cards: [{ kind: 'profit', data: { period: 'Sep 1–14, 2026', revenue: D.profit.revenue, cogs: D.profit.cogs, expenses: D.profit.expenses, net: D.profit.revenue - D.profit.cogs - D.profit.expenses, margin: D.profit.margin, proj: 'KES 9,500,000' }}],
+          tg: [[{ label: 'Share PDF', action: function () { UI.say('PDF will be sent as a document shortly.', { delay: 500, tg: kbMenu() }); } }, { label: 'Main menu', action: mainMenu }]]
+        });
+      }
+
+      /* stock */
+      function stockAlert() {
+        UI.say('Stock levels.', { delay: 500,
+          cards: [{ kind: 'stock', data: { title: 'Stock today', rows: D.items.map(function (it) { return { name: it.name, stock: it.stock, unit: it.unit, min: it.min }; }), note: 'Nails 3" below the 100 kg minimum.' }}],
+          tg: [[{ label: 'Restock Nails 3"', action: function () { restock(); } }, { label: 'Main menu', action: mainMenu }]]
+        });
+      }
+      function restock() {
+        UI.say('Restock order created for 100 kg Nails 3" (Mabati Rolling Mills).', { delay: 600,
+          cards: [{ kind: 'status', data: { title: 'Restock request', sub: 'Mabati Rolling Mills', cls: 'pending', tag: 'Sent', rows: [{ k: 'Amount', v: D.fmtKES(19000) }, { k: 'Delivery', v: '3 days' }], note: 'PO auto-synced with eTIMS.' }}],
+          tg: [[{ label: 'Main menu', action: mainMenu }]]
+        });
+      }
+
+      /* customer */
+      function customerLookup() {
+        UI.say('Choose a customer:', { delay: 300,
+          tg: D.customers.map(function (c) { return [{ label: c.name, action: function () { showCust(c); } }]; }).concat([[{ label: 'Main menu', action: mainMenu }]])
+        });
+      }
+      function showCust(c) {
+        UI.say('Customer profile:', { delay: 400,
+          cards: [{ kind: 'customer', data: { name: c.name, tin: c.tin, phone: c.phone, email: c.email, purchases: parseInt(String(c.purchases).replace(/[^0-9]/g, ''), 10) || 0, last: 'INV-2026-0148' }}],
+          tg: [[{ label: 'View invoices', action: function () { UI.say('Recent invoices for ' + c.name + ':', { delay: 300, cards: [{ kind: 'status', data: { title: 'Recent invoices', sub: c.name, rows: [{ k: 'INV-2026-0148', v: 'Fulfilled' }, { k: 'INV-2026-0147', v: 'Fulfilled' }] } }], tg: [[{ label: 'Main menu', action: mainMenu }]] }); } },
+                { label: 'Main menu', action: mainMenu }]]
+        });
+      }
+
+      /* tax */
+      function taxFiling() {
+        UI.say('Your VAT return for ' + D.vat.period + ' is due on ' + D.vat.due + '.', { delay: 400,
+          cards: [{ kind: 'tax', data: { title: 'VAT return — ' + D.vat.period, dueLabel: D.vat.due, period: 'Jul 1 – Aug 31, 2026', amount: D.vat.amount, note: 'eTIMS data synced locally.' }}],
+          tg: [[{ label: 'File now', action: function () { fileReturn(); } }, { label: 'Notices', action: function () { notices(); } }],
+              [{ label: 'Main menu', action: mainMenu }]]
+        });
+      }
+      function fileReturn() {
+        UI.say('Filing VAT return with KRA...', { delay: 800 });
+        setTimeout(function () {
+          UI.say('VAT filed.', { delay: 500,
+            cards: [{ kind: 'status', data: { title: 'VAT filed', sub: D.vat.period, cls: 'fulfilled', tag: 'Filed', rows: [{ k: 'Receipt', v: 'RAA-7248392' }, { k: 'Paid', v: D.fmtKES(D.vat.amount) }], note: 'Receipt saved to your eTIMS portal.' }}],
+            tg: [[{ label: 'Main menu', action: mainMenu }]]
+          });
+        }, 1400);
+      }
+      function notices() {
+        UI.say('Latest KRA notices:', { delay: 400, cards: DEMO.notices.map(function (n) { return { kind: 'notice', data: { title: n.title, from: n.by, date: n.date, body: 'Review stock figures before filing. Use /stock to check.', link: 'etims.kra.go.ke' } }; }), tg: [[{ label: 'Check stock', action: stockAlert }, { label: 'Main menu', action: mainMenu }]] });
+      }
+
+      /* storefront */
+      function storeFront() {
+        UI.say('Storefront orders:', { delay: 400,
+          cards: [{ kind: 'store', data: { title: 'Storefront', url: D.store.url, orders: D.store.orders, link: D.store.url }}],
+          tg: [[{ label: 'Confirm order', action: function () { confirmOrder(); } }, { label: 'Share link', action: function () { UI.say('Link copied: ' + D.store.url, { delay: 300, tg: kbMenu() }); } }],
+              [{ label: 'Main menu', action: mainMenu }]]
+        });
+      }
+      function confirmOrder() {
+        UI.say('Order confirmed — invoice + eTIMS receipt generated.', { delay: 600,
+          cards: [{ kind: 'status', data: { title: 'Order confirmed', sub: 'Diana Wambui', cls: 'fulfilled', tag: 'Paid', rows: [{ k: 'Item', v: 'GI Iron Sheet x 20' }, { k: 'Amount', v: D.fmtKES(23000) }, { k: 'Payment', v: 'M-Pesa' }], note: 'Receipt: ETI-2026-01456.' }}],
+          tg: [[{ label: 'Main menu', action: mainMenu }]]
+        });
+      }
+
+    })();
+  </script>
+
+</body>
+</html>

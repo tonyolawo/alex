@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alex — SMS Chat</title>
+  <link rel="stylesheet" href="../css/theme-fintech.css" />
+  <link rel="stylesheet" href="../css/theme-casual.css" />
+  <link rel="stylesheet" href="../css/chat-base.css" />
+  <style>
+    .app { max-width: 400px; height: calc(100vh - 24px); border-radius: var(--radius-lg); }
+    .chat-header { background: #3b4252; color: #fff; }
+    .chat-header .avatar { background: #5c6bc0; color: #fff; }
+    .chat-header .state { opacity: 0.85; }
+    .chat-body { background: #ffffff; }
+    .msg { max-width: 88%; }
+    .msg-bot { background: #f0f0f4; border: none; }
+    .msg-user { background: #dbe7ff; color: #262a35; }
+    .msg-bot .sender { color: #5c6bc0; }
+    .sms-label {
+      align-self: center; text-align: center; font-size: 11px; color: var(--muted);
+      background: #f5f5f7; border-radius: 8px; padding: 4px 10px; margin-bottom: 2px;
+    }
+    .sms-receipt {
+      align-self: flex-start; max-width: 90%; padding: 10px 12px;
+      background: #f0f0f4; border-left: 3px solid #5c6bc0; border-radius: 6px;
+      font-size: 13.5px; line-height: 1.55; color: #262a35;
+    }
+    .sms-receipt b { color: #3b4252; }
+    .chat-input.sms-input { background: #fff; border-top: 1px dashed #d0d0d4; }
+    .chat-input input { background: #f0f0f4; border: none; font-family: Consolas, Menlo, monospace; }
+    .chat-input .send { background: #5c6bc0; color: #fff; border-radius: 8px; width: auto; padding: 0 14px; font-size: 13px; height: 40px; }
+    .sms-choices { max-width: 95%; }
+    body.sms-msg { font-family: Consolas, Menlo, monospace; }
+  </style>
+</head>
+<body class="page">
+
+  <div class="app">
+
+    <div class="chat-header">
+      <div class="avatar">A</div>
+      <div class="identity">
+        <div class="name">Alex — SMS</div>
+        <div class="state">+254 721 000 111 · free to reach 5 Free</div>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle">Theme</button>
+      </div>
+    </div>
+
+    <div class="chat-body"></div>
+
+    <div class="chat-input sms-input">
+      <input type="text" placeholder="Reply with number..." />
+      <button class="send">SEND</button>
+    </div>
+
+  </div>
+
+  <script src="../data/demo.js"></script>
+  <script src="../js/chat-ui.js"></script>
+  <script>
+    (function () {
+      var D = DEMO;
+      var UI = AlexChat.UI.init({
+        sender: 'Alex',
+        onText: function (text) {
+          var t = text.toLowerCase().trim();
+          if (/^1|invoice|create|bill/.test(t)) return createInvoice();
+          if (/^2|report|sales|profit/.test(t)) return salesReport();
+          if (/^3|stock|inventory/.test(t)) return stockAlert();
+          if (/^4|customer|profile/.test(t)) return customerLookup();
+          if (/^5|tax|filing|vat|etims/.test(t)) return taxFiling();
+          if (/^6|store|orders/.test(t)) return storeFront();
+          if (/^7|help|menu|start/.test(t)) return mainMenu();
+          UI.say('Unknown option. Send HELP for the menu.', { delay: 400, sms: smsMenu() });
+        }
+      });
+
+      function smsMenu() {
+        return [
+          { label: 'Create invoice', num: '1', action: createInvoice },
+          { label: 'Sales report', num: '2', action: salesReport },
+          { label: 'Stock levels', num: '3', action: stockAlert },
+          { label: 'Customer lookup', num: '4', action: customerLookup },
+          { label: 'Tax filing (eTIMS)', num: '5', action: taxFiling },
+          { label: 'Storefront orders', num: '6', action: storeFront },
+          { label: 'Main menu / help', num: '7', action: mainMenu }
+        ];
+      }
+
+      UI.say('Alex is now managing Rainbow Hardware by SMS.', { delay: 300 });
+      setTimeout(function () {
+        UI.say('Welcome to Alex (Rainbow Hardware).\nReply with a number:\n1 Invoice\n2 Report\n3 Stock\n4 Customers\n5 Tax\n6 Store\n7 Help', { delay: 300, sms: smsMenu() });
+      }, 600);
+
+      function mainMenu() {
+        UI.say('Menu:\n1 Invoice\n2 Report\n3 Stock\n4 Customers\n5 Tax\n6 Store\n7 Help', { delay: 300, sms: smsMenu() });
+      }
+
+      /* invoice */
+      function createInvoice() {
+        UI.say('New invoice. Send:\n1 Bora Builders\n2 Faith Njoroge\n3 Kijabe Traders\n4 New customer', { delay: 300,
+          sms: [
+            { label: 'Bora Builders', num: '1', action: function () { invItems('Bora Builders'); } },
+            { label: 'Faith Njoroge', num: '2', action: function () { invItems('Faith Njoroge'); } },
+            { label: 'Kijabe Traders', num: '3', action: function () { invItems('Kijabe Traders'); } },
+            { label: 'New customer', num: '4', action: function () { invItems('New customer'); } }
+          ]
+        });
+      }
+      function invItems(cust) {
+        UI.say('Invoice for ' + cust + '. Item:\n1 Cement\n2 GI Sheet\n3 PVC Pipe\n4 Cancel', { delay: 300,
+          sms: [
+            { label: 'Cement', num: '1', action: function () { invQty(cust, D.items[0]); } },
+            { label: 'GI Sheet', num: '2', action: function () { invQty(cust, D.items[1]); } },
+            { label: 'PVC Pipe', num: '3', action: function () { invQty(cust, D.items[4]); } },
+            { label: 'Cancel', num: '4', action: mainMenu }
+          ]
+        });
+      }
+      function invQty(cust, item) {
+        UI.say(item.name + '. Quantity:\nSend a number', { delay: 250,
+          sms: [
+            { label: 'x1', num: '1', action: function () { invConfirm(cust, item, 1); } },
+            { label: 'x2', num: '2', action: function () { invConfirm(cust, item, 2); } },
+            { label: 'x5', num: '5', action: function () { invConfirm(cust, item, 5); } }
+          ]
+        });
+      }
+      function invConfirm(cust, item, qty) {
+        var line = qty * item.price, vat = Math.round(line * 0.16), total = line + vat;
+        UI.say(item.name + ' x' + qty + ' = KES ' + line.toLocaleString() + '\nVAT + KES ' + vat.toLocaleString() + '\nTOTAL KES ' + total.toLocaleString() + '\nReply: 1 Send, 2 Cancel', { delay: 400,
+          sms: [
+            { label: 'Send to KRA', num: '1', action: function () { invSent(cust, 'INV-2026-0154', total); } },
+            { label: 'Cancel', num: '2', action: mainMenu }
+          ]
+        });
+      }
+      function invSent(cust, invId, total) {
+        UI.say('Submitted ' + invId + ' to KRA eTIMS. Amount KES ' + total.toLocaleString() + ' (Pending).', { delay: 600, sender: 'KRA eTIMS',
+          sms: [
+            { label: 'Mark fulfilled', num: '1', action: function () { invPaid(invId, cust, total); } },
+            { label: 'Main menu', num: '2', action: mainMenu }
+          ]
+        });
+      }
+      function invPaid(invId, cust, total) {
+        UI.say('M-Pesa QGK92K3M1Z confirmed for ' + cust + '. ' + invId + ' fulfilled. Receipt ETI-2026-01458.', { delay: 500, sender: 'Alex' });
+        setTimeout(function () { UI.say('Anything else? Reply with a number.', { delay: 400, sms: smsMenu() }); }, 800);
+      }
+
+      /* reports */
+      function salesReport() {
+        UI.say('Report:\n1 This week\n2 This month\n3 P&L', { delay: 300,
+          sms: [
+            { label: 'This week', num: '1', action: weekReport },
+            { label: 'This month', num: '2', action: monthReport },
+            { label: 'P&L (month)', num: '3', action: pAndL }
+          ]
+        });
+      }
+      function weekReport() {
+        UI.say('Sales Sep 8-14: KES 1,248,500 across 128 items.\nTop seller: GI Sheet (KES 230,000).\nReply: 1 P&L, 2 Menu', { delay: 500,
+          sms: [
+            { label: 'P&L', num: '1', action: pAndL },
+            { label: 'Menu', num: '2', action: mainMenu }
+          ]
+        });
+      }
+      function monthReport() {
+        UI.say('Sales Sep 1-14: KES 4,960,000 across 512 items.\nReply: 1 P&L, 2 Menu', { delay: 500,
+          sms: [
+            { label: 'P&L', num: '1', action: pAndL },
+            { label: 'Menu', num: '2', action: mainMenu }
+          ]
+        });
+      }
+      function pAndL() {
+        UI.say('P&L Sep 1-14:\nRevenue KES 4,960,000\nCOGS (KES 2,910,000)\nExpenses (KES 640,000)\nNet KES 1,410,000 (28.5% margin).\nPDF report available at alex.rainbow.co.ke/pnl', { delay: 600,
+          sms: [
+            { label: 'Menu', num: '1', action: mainMenu }
+          ]
+        });
+      }
+
+      /* stock */
+      function stockAlert() {
+        UI.say('Stock <50 units:\n1 Nails 3" — 45 kg LOW\nAll other items OK.\nReply: 1 Restock, 2 Menu', { delay: 500,
+          sms: [
+            { label: 'Restock', num: '1', action: function () { restock(); } },
+            { label: 'Menu', num: '2', action: mainMenu }
+          ]
+        });
+      }
+      function restock() {
+        UI.say('Purchase order sent to Mabati Rolling Mills: 100 kg Nails 3" = KES 19,000. Delivery 3 days.', { delay: 600,
+          sms: [
+            { label: 'Menu', num: '1', action: mainMenu }
+          ]
+        });
+      }
+
+      /* customer */
+      function customerLookup() {
+        UI.say('Customer:\n1 Bora Builders\n2 Faith Njoroge\n3 Kijabe Traders', { delay: 300,
+          sms: [
+            { label: 'Bora Builders', num: '1', action: function () { custInfo(D.customers[0]); } },
+            { label: 'Faith Njoroge', num: '2', action: function () { custInfo(D.customers[1]); } },
+            { label: 'Kijabe Traders', num: '3', action: function () { custInfo(D.customers[2]); } }
+          ]
+        });
+      }
+      function custInfo(c) {
+        UI.say(c.name + '\nTIN ' + c.tin + '\nTel ' + c.phone + '\nPurchases ' + c.purchases + '\nLast INV-2026-0148.\nReply: 1 Menu', { delay: 400,
+          sms: [
+            { label: 'Menu', num: '1', action: mainMenu }
+          ]
+        });
+      }
+
+      /* tax */
+      function taxFiling() {
+        UI.say('VAT return (Jul-Aug) due ' + D.vat.due + '. Amount KES 312,400. eTIMS synced.\nReply: 1 File, 2 Notices, 3 Menu', { delay: 400,
+          sms: [
+            { label: 'File now', num: '1', action: function () { fileReturn(); } },
+            { label: 'Notices', num: '2', action: function () { notices(); } },
+            { label: 'Menu', num: '3', action: mainMenu }
+          ]
+        });
+      }
+      function fileReturn() {
+        UI.say('Filing VAT with KRA...', { delay: 700 });
+        setTimeout(function () {
+          UI.say('VAT filed for Jul-Aug. Receipt RAA-7248393. Amount KES 312,400. Receipt link: etims.kra.go.ke/raa7248393', { delay: 500,
+            sms: [
+              { label: 'Menu', num: '1', action: mainMenu }
+            ]
+          });
+        }, 1500);
+      }
+      function notices() {
+        UI.say('KRA notice: Stock reporting filing for Sep 2026. Review stock figures before filing. Reply: 3 for stock, 7 menu.', { delay: 400,
+          sms: [
+            { label: 'Stock', num: '3', action: stockAlert },
+            { label: 'Menu', num: '7', action: mainMenu }
+          ]
+        });
+      }
+
+      /* store */
+      function storeFront() {
+        UI.say('Store alexstore.rainbow.co.ke has 2 orders:\n1 Diana: GI Sheet x20 KES 23,000\n2 Mbugua: Cement x40 KES 27,200\nReply: 1 Confirm, 2 Menu', { delay: 400,
+          sms: [
+            { label: 'Confirm order', num: '1', action: function () { confirmOrder(); } },
+            { label: 'Menu', num: '2', action: mainMenu }
+          ]
+        });
+      }
+      function confirmOrder() {
+        UI.say('Order confirmed: Diana KES 23,000. Invoice auto-generated. eTIMS receipt ETI-2026-01459.', { delay: 600,
+          sms: [
+            { label: 'Menu', num: '1', action: mainMenu }
+          ]
+        });
+      }
+
+    })();
+  </script>
+
+</body>
+</html>

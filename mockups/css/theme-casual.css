@@ -1,0 +1,34 @@
+/* Alex — theme: Friendly Casual */
+:root[data-theme="casual"] {
+  --bg: #f7efdf;
+  --surface: #fffdf6;
+  --chat-bg: #f4ead8;
+  --bubble-bot: #ffffff;
+  --bubble-bot-border: #f0e3cd;
+  --bubble-user: #ffded0;
+  --bubble-user-text: #4a2c1c;
+  --bubble-user-meta: #c08a6a;
+  --text: #3b2d20;
+  --muted: #8a7761;
+  --primary: #e8734a;
+  --primary-strong: #c95a33;
+  --primary-soft: #ffe7db;
+  --on-primary: #ffffff;
+  --accent: #d9a520;
+  --success: #3d8b5f;
+  --success-soft: #e2f3e8;
+  --warning: #c98a2d;
+  --warning-soft: #fdf0d3;
+  --danger: #cf5240;
+  --danger-soft: #fbebe4;
+  --border: #f0e3cd;
+  --radius: 18px;
+  --radius-sm: 14px;
+  --radius-lg: 26px;
+  --shadow: 0 16px 40px rgba(92, 62, 28, 0.16);
+  --shadow-soft: 0 4px 14px rgba(92, 62, 28, 0.08);
+  --chrome: #ffffff;
+  --chrome-text: #3b2d20;
+  --side-bg: #fffaf0;
+  --input-bg: #f8efe0;
+}

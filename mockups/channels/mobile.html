@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alex — Mobile App Chat</title>
+  <link rel="stylesheet" href="../css/theme-fintech.css" />
+  <link rel="stylesheet" href="../css/theme-casual.css" />
+  <link rel="stylesheet" href="../css/chat-base.css" />
+  <style>
+    .app { max-width: 400px; height: calc(100vh - 24px); border-radius: var(--radius-lg); }
+    .chat-header { background: var(--primary); color: #fff; }
+    .chat-header .avatar { background: var(--primary-strong); color: #fff; }
+    .chat-header .state { opacity: 0.85; }
+    .banner {
+      margin: 6px 14px 0;
+      background: var(--primary-soft);
+      border: 1px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 12.5px;
+      color: var(--primary-strong);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .banner b { font-weight: 700; }
+    .cards-wrap { display: flex; flex-direction: column; gap: 10px; }
+    .notif-card {
+      display: flex; gap: 10px; align-items: flex-start;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13.5px;
+      align-self: stretch; box-shadow: var(--shadow-soft);
+    }
+    .notif-card .notif-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; flex: 0 0 auto; }
+    .notif-card .notif-text b { display: block; }
+    .notif-card .notif-text .n-sub { color: var(--muted); font-size: 12px; }
+    .chat-input input { padding-left: 18px; }
+  </style>
+</head>
+<body class="page">
+
+  <div class="app">
+
+    <div class="chat-header">
+      <div class="avatar">A</div>
+      <div class="identity">
+        <div class="name">Alex for Rainbow Hardware</div>
+        <div class="state">Connected to M-Pesa · eTIMS</div>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle">Theme</button>
+      </div>
+    </div>
+
+    <div class="banner">Business PIN <b>P051234567V</b> — verified with KRA eTIMS</div>
+
+    <div class="chat-body"></div>
+
+    <div class="chat-input">
+      <input type="text" placeholder="Message Alex..." />
+      <button class="send">></button>
+    </div>
+
+  </div>
+
+  <script src="../data/demo.js"></script>
+  <script src="../js/chat-ui.js"></script>
+  <script>
+    (function () {
+      var D = DEMO;
+      var UI = AlexChat.UI.init({
+        sender: 'Alex',
+        onText: function (text) {
+          var t = text.toLowerCase();
+          if (/invoice|create|bill/.test(t)) return createInvoice();
+          if (/report|sales|profit/.test(t)) return salesReport();
+          if (/stock|inventory/.test(t)) return stockAlert();
+          if (/customer|profile/.test(t)) return customerLookup();
+          if (/tax|filing|vat|etims/.test(t)) return taxFiling();
+          if (/store|storefront|orders/.test(t)) return storeFront();
+          if (/menu|help|start/.test(t)) return mainMenu();
+          UI.say('Type a keyword to get started: INVOICE, REPORT, STOCK, CUSTOMER, TAX, STORE, MENU.', { delay: 300, replies: quickMenu() });
+        }
+      });
+
+      function quickMenu() {
+        return [
+          { label: 'New invoice', action: createInvoice },
+          { label: 'Sales report', action: salesReport },
+          { label: 'Stock', action: stockAlert },
+          { label: 'Customers', action: customerLookup },
+          { label: 'Tax & eTIMS', action: taxFiling },
+          { label: 'Storefront', action: storeFront }
+        ];
+      }
+
+      /* PUSH-STYLE notifications */
+      UI.pill('10:00 AM');
+      UI.bot('Good morning, Amina. I have 2 notifications for you.', 'Alex');
+      setTimeout(function () {
+        UI.cards([
+          { kind: 'notice', data: { title: 'M-Pesa payment received', from: 'Bora Builders', date: '10:02 AM', body: 'KES 45,600 received for INV-2026-0148. Auto-marked as fulfilled.' } },
+          { kind: 'notice', data: { title: 'Low stock alert', from: 'Stock monitor', date: '9:40 AM', body: 'Nails 3" (per kg) is below 50 kg — only 45 kg left.' } }
+        ]);
+        UI.say('Would you like to review your business now?', { delay: 400, replies: quickMenu() });
+      }, 500);
+
+      function mainMenu() {
+        UI.say('Main menu — what would you like to do?', { delay: 300, cards: [{ kind: 'menu', data: { title: 'Main menu', items: [
+          { label: 'Create a new invoice' }, { label: 'Sales report / P&L' },
+          { label: 'Stock levels' }, { label: 'Customer lookup' },
+          { label: 'Tax filing (eTIMS)' }, { label: 'Storefront orders' }
+        ]}}], replies: quickMenu() });
+      }
+
+      /* create invoice */
+      function createInvoice() {
+        UI.say('Create invoice — step 1 of 3.\nWho is the customer?', { delay: 300,
+          replies: D.customers.map(function (c) { return { label: c.name, action: function () { invItems(c); } }; })
+            .concat([{ label: 'New customer', action: function () { invItems({ name: 'New customer' }); } }])
+        });
+      }
+      function invItems(c) {
+        UI.say('' + c.name + ' selected — step 2 of 3.\nPick an item:', { delay: 300,
+          replies: D.items.filter(function (it){ return it.stock > 0; }).map(function (it) {
+            return { label: it.name, action: function () { invQty(c, it); } };
+          })
+        });
+      }
+      function invQty(c, item) {
+        UI.say('How many ' + item.unit + 's?', { delay: 250,
+          replies: [1, 2, 5, 10].map(function (n) {
+            return { label: 'x' + n, action: function () { invConfirm(c, item, n); } };
+          })
+        });
+      }
+      function invConfirm(c, item, qty) {
+        var line = qty * item.price, vat = Math.round(line * 0.16), total = line + vat;
+        UI.say('Step 3 of 3 — confirm.', { delay: 400,
+          cards: [{ kind: 'invoice', data: { id: 'INV-2026-0151', customer: c.name, items: [{ name: item.name, qty: qty, line: line }], vat: vat, total: total, status: 'pending' }}],
+          replies: [
+            { label: 'Confirm & submit', cls: 'primary', action: function () { invSent(c.name, 'INV-2026-0151', total); } },
+            { label: 'Cancel', action: mainMenu }
+          ]
+        });
+      }
+      function invSent(cust, invId, total) {
+        UI.say('Submitted to KRA eTIMS.', { delay: 600,
+          cards: [{ kind: 'status', data: { title: invId, sub: cust, cls: 'pending', tag: 'Pending', rows: [{ k: 'Amount', v: D.fmtKES(total) }], note: 'eTIMS serial assigned. Mark fulfilled on delivery.' }}],
+          replies: [
+            { label: 'Mark fulfilled', cls: 'primary', action: function () { invPaid(invId, cust, total); } },
+            { label: 'Main menu', action: mainMenu }
+          ]
+        });
+      }
+      function invPaid(invId, cust, total) {
+        UI.say('Invoice fulfilled.', { delay: 500,
+          cards: [{ kind: 'receipt', data: { title: 'Payment confirmed', sub: invId + ' — ' + cust, mpesa: 'QGK72X3MNP', amount: total, etims: 'ETI-2026-01451' }}]
+        });
+        setTimeout(function () { UI.say('Anything else?', { delay: 400, replies: quickMenu() }); }, 700);
+      }
+
+      /* reports */
+      function salesReport() {
+        UI.say('Pick a report:', { delay: 300, replies: [
+          { label: 'This week', action: weekReport },
+          { label: 'This month', action: monthReport },
+          { label: 'Profit & Loss', action: pAndL }
+        ]});
+      }
+      function weekReport() {
+        UI.say('Sales — this week:', { delay: 500,
+          cards: [{ kind: 'report', data: { title: 'Sales — Sep 8 to 14', rows: [
+            { name: 'Cement', amount: 136000 }, { name: 'GI Iron Sheet', amount: 230000 },
+            { name: 'PVC Pipe', amount: 14400 }, { name: 'Bulbs', amount: 2850 }
+          ], total: D.week.amount, note: D.week.count + ' items sold.' }}],
+          replies: [{ label: 'View P&L', action: pAndL }, { label: 'Main menu', action: mainMenu }]
+        });
+      }
+      function monthReport() {
+        UI.say('Sep month-to-date:', { delay: 500,
+          cards: [{ kind: 'report', data: { title: 'Sales — Sep 1 to 14', rows: D.items.map(function (it, i){ return { name: it.name, amount: [1520000, 1280000, 41000, 42000, 39000, 9200][i] }; }), total: D.month.amount, note: D.month.count + ' items sold.' }}],
+          replies: [{ label: 'View P&L', action: pAndL }, { label: 'Main menu', action: mainMenu }]
+        });
+      }
+      function pAndL() {
+        UI.say('P&L for September so far:', { delay: 600,
+          cards: [{ kind: 'profit', data: { period: 'Sep 1–14, 2026', revenue: D.profit.revenue, cogs: D.profit.cogs, expenses: D.profit.expenses, net: D.profit.revenue - D.profit.cogs - D.profit.expenses, margin: D.profit.margin, proj: 'KES 9,500,000' }}],
+          replies: [{ label: 'Share report', action: function () { UI.say('Report shared to your email.', { delay: 400, replies: [{ label: 'Main menu', action: mainMenu }] }); } }, { label: 'Main menu', action: mainMenu }]
+        });
+      }
+
+      /* stock */
+      function stockAlert() {
+        UI.say('Stock levels:', { delay: 500,
+          cards: [{ kind: 'stock', data: { title: 'Stock today', rows: D.items.map(function (it){ return { name: it.name, stock: it.stock, unit: it.unit, min: it.min }; }), note: 'Tap to see restock suggestions.' }}],
+          replies: [{ label: 'Restock low items', action: function () { restock(); } }, { label: 'Main menu', action: mainMenu }]
+        });
+      }
+      function restock() {
+        UI.say('Purchases order created for 100 kg of Nails 3" from Mabati Rolling Mills.', { delay: 600,
+          cards: [{ kind: 'status', data: { title: 'Purchase order', sub: 'Mabati Rolling Mills', cls: 'pending', tag: 'Draft', rows: [{ k: 'Item', v: 'Nails 3" (100 kg)' }, { k: 'Amount', v: D.fmtKES(19000) }], note: 'Supplier confirmations auto-capture eTIMS invoices.' }}],
+          replies: [{ label: 'Main menu', action: mainMenu }]
+        });
+      }
+
+      /* customers */
+      function customerLookup() {
+        UI.say('Which customer?', { delay: 300, replies: D.customers.map(function (c) {
+          return { label: c.name, action: function () { showCust(c); } };
+        }).concat([{ label: 'Main menu', action: mainMenu }]) });
+      }
+      function showCust(c) {
+        UI.say('+ ' + c.name, { delay: 400,
+          cards: [{ kind: 'customer', data: { name: c.name, tin: c.tin, phone: c.phone, email: c.email, purchases: parseInt(String(c.purchases).replace(/[^0-9]/g, ''), 10) || 0, last: 'INV-2026-0148' }}],
+          replies: [
+            { label: 'Message customer', action: function () { UI.say('' + c.name + ' added to an ongoing WhatsApp thread.', { delay: 400, replies: [{ label: 'Main menu', action: mainMenu }] }); } },
+            { label: 'Main menu', action: mainMenu }
+          ]
+        });
+      }
+
+      /* tax */
+      function taxFiling() {
+        UI.say('VAT filing status:', { delay: 400,
+          cards: [{ kind: 'tax', data: { title: 'VAT return — ' + D.vat.period, dueLabel: D.vat.due, period: 'Jul 1 – Aug 31, 2026', amount: D.vat.amount, note: 'VAT is due on ' + D.vat.due + '. Your eTIMS data is synced.' }}],
+          replies: [
+            { label: 'File now', cls: 'primary', action: function () { fileReturn(); } },
+            { label: 'KRA notices', action: function () { notices(); } },
+            { label: 'Main menu', action: mainMenu }
+          ]
+        });
+      }
+      function fileReturn() {
+        UI.say('Filing with KRA...', { delay: 700 });
+        setTimeout(function () {
+          UI.say('Filed!', { delay: 500,
+            cards: [{ kind: 'status', data: { title: 'VAT filed', sub: D.vat.period, cls: 'fulfilled', tag: 'Filed', rows: [{ k: 'Receipt', v: 'RAA-' + (1000000 + Math.floor(Math.random() * 900000)) }, { k: 'Paid', v: D.fmtKES(D.vat.amount) }], note: 'Receipt saved to your eTIMS portal.' }}],
+            replies: [{ label: 'Main menu', action: mainMenu }]
+          });
+        }, 1300);
+      }
+      function notices() {
+        UI.say('KRA notices:', { delay: 400, cards: DEMO.notices.map(function (n) { return { kind: 'notice', data: { title: n.title, from: n.by, date: n.date, body: 'Review your stock figures before filing. You can reply STOCK to re-check.', link: 'etims.kra.go.ke' } }; }), replies: [{ label: 'Main menu', action: mainMenu }] });
+      }
+
+      /* storefront */
+      function storeFront() {
+        UI.say('Your storefront is live at ' + D.store.url + '.', { delay: 400,
+          cards: [{ kind: 'store', data: { title: 'Storefront', url: D.store.url, orders: D.store.orders, link: D.store.url }}],
+          replies: [
+            { label: 'Confirm "Diana Wambui"', action: function () { confirmOrder(); } },
+            { label: 'Share link', action: function () { UI.say('Link copied: ' + D.store.url, { delay: 300, replies: [{ label: 'Main menu', action: mainMenu }] }); } },
+            { label: 'Main menu', action: mainMenu }
+          ]
+        });
+      }
+      function confirmOrder() {
+        UI.say('Order confirmed — invoice auto-generated and eTIMS receipt issued.', { delay: 600,
+          cards: [{ kind: 'status', data: { title: 'Order confirmed', sub: 'Diana Wambui', cls: 'fulfilled', tag: 'Paid', rows: [{ k: 'Item', v: 'GI Iron Sheet x 20' }, { k: 'Amount', v: D.fmtKES(23000) }, { k: 'Payment', v: 'M-Pesa' }], note: 'Receipt: ETI-2026-01452.' }}],
+          replies: [{ label: 'Main menu', action: mainMenu }]
+        });
+      }
+
+    })();
+  </script>
+
+</body>
+</html>

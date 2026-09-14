@@ -1,0 +1,35 @@
+/* Alex — theme: Fintech Modern */
+:root,
+:root[data-theme="fintech"] {
+  --bg: #e8efed;
+  --surface: #ffffff;
+  --chat-bg: #f4f8f7;
+  --bubble-bot: #ffffff;
+  --bubble-bot-border: #e3eae8;
+  --bubble-user: #dff1ea;
+  --bubble-user-text: #123129;
+  --bubble-user-meta: #6a8b80;
+  --text: #12201c;
+  --muted: #5a6d66;
+  --primary: #0f7a5f;
+  --primary-strong: #085b47;
+  --primary-soft: #e4f4ee;
+  --on-primary: #ffffff;
+  --accent: #2e86c1;
+  --success: #17824e;
+  --success-soft: #e2f4ea;
+  --warning: #a8680f;
+  --warning-soft: #fdf3df;
+  --danger: #c0392b;
+  --danger-soft: #fdece9;
+  --border: #dde7e4;
+  --radius: 14px;
+  --radius-sm: 12px;
+  --radius-lg: 22px;
+  --shadow: 0 16px 40px rgba(18, 42, 34, 0.16);
+  --shadow-soft: 0 4px 14px rgba(18, 42, 34, 0.08);
+  --chrome: #ffffff;
+  --chrome-text: #12201c;
+  --side-bg: #fbfdfc;
+  --input-bg: #f1f6f4;
+}

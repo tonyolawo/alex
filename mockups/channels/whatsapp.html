@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alex — WhatsApp Chat</title>
+  <link rel="stylesheet" href="../css/theme-fintech.css" />
+  <link rel="stylesheet" href="../css/theme-casual.css" />
+  <link rel="stylesheet" href="../css/chat-base.css" />
+  <style>
+    .app { max-width: 420px; height: calc(100vh - 24px); border-radius: var(--radius-lg); }
+    .chat-header { background: #075e54; color: #fff; }
+    .chat-header .avatar { background: #128c7e; color: #fff; }
+    .chat-header .state { opacity: 0.8; }
+    .chat-body { background: #ece5dd; background-image: none; }
+    .msg-bot { background: #ffffff; border: none; box-shadow: 0 1px 1px rgba(0,0,0,0.12); }
+    .msg-user { background: #dcf8c6; border: none; box-shadow: 0 1px 1px rgba(0,0,0,0.12); }
+    .msg .meta { color: rgba(0,0,0,0.35); }
+    .ticks { color: #4fc3f7; }
+    .wa-banner {
+      margin: 8px 12px 0; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 10px;
+      padding: 8px 12px; font-size: 12.5px; color: #6b5317;
+    }
+    .quick-replies.wa .qr { background: #fff; border: 1px solid #25d366; color: #075e54; border-radius: 8px; }
+    .quick-replies.wa .qr:hover { background: #25d366; color: #fff; }
+    .cards-wrap { display: flex; flex-direction: column; gap: 10px; }
+    .chat-input { background: #f0f0f0; border-top-color: #e0e0e0; }
+    .chat-input input { border: none; background: #fff; border-radius: 10px; }
+    .chat-input .send { background: #25d366; color: #fff; border-radius: 10px; width: auto; padding: 0 14px; font-size: 13px; font-weight: 700; height: 40px; }
+    .quick-replies.wa .qr.primary { background: #25d366; color: #fff; }
+  </style>
+</head>
+<body class="page">
+
+  <div class="app">
+
+    <div class="chat-header">
+      <div class="avatar">A</div>
+      <div class="identity">
+        <div class="name">Alex</div>
+        <div class="state">Business support · Rainbow Hardware</div>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle">Theme</button>
+      </div>
+    </div>
+
+    <div class="wa-banner">You are talking to Alex for Rainbow Hardware. eTIMS + M-Pesa connected.</div>
+
+    <div class="chat-body"></div>
+
+    <div class="chat-input">
+      <input type="text" placeholder="Message..." />
+      <button class="send">Send</button>
+    </div>
+
+  </div>
+
+  <script src="../data/demo.js"></script>
+  <script src="../js/chat-ui.js"></script>
+  <script>
+    (function () {
+      var D = DEMO;
+      var UI = AlexChat.UI.init({
+        sender: 'Alex',
+        ticks: true,
+        onText: function (text) {
+          var t = text.toLowerCase();
+          if (/invoice|create|bill/.test(t)) return createInvoice();
+          if (/report|sales|profit/.test(t)) return salesReport();
+          if (/stock|inventory/.test(t)) return stockAlert();
+          if (/customer|profile/.test(t)) return customerLookup();
+          if (/tax|filing|vat|etims/.test(t)) return taxFiling();
+          if (/store|storefront|orders/.test(t)) return storeFront();
+          if (/menu|help|start/.test(t)) return mainMenu();
+          UI.say('Type a keyword or tap a button: INVOICE, REPORT, STOCK, CUSTOMER, TAX, STORE, MENU.', { delay: 300, replies: quickMenu(), wa: true });
+        }
+      });
+
+      function quickMenu() {
+        return [
+          { label: 'Create invoice', action: createInvoice },
+          { label: 'Sales report', action: salesReport },
+          { label: 'Stock levels', action: stockAlert },
+          { label: 'Tax filing', action: taxFiling },
+          { label: 'Storefront', action: storeFront }
+        ];
+      }
+
+      UI.pill('Today');
+      UI.bot('Hello Amina. This is Alex for Rainbow Hardware.', 'Alex');
+      setTimeout(function () {
+        UI.say('What can I help you with today?', { delay: 400, replies: quickMenu(), wa: true });
+      }, 600);
+
+      function mainMenu() {
+        UI.say('Main menu.', { delay: 300, replies: quickMenu(), wa: true });
+      }
+
+      /* invoice flow */
+      function createInvoice() {
+        UI.say('Who is this invoice for?', { delay: 300, replies: D.customers.map(function (c) { return { label: c.name, action: function () { invItems(c); } }; }).concat([{ label: 'New customer', action: function () { invItems({ name: 'New customer' }); } }]), wa: true });
+      }
+      function invItems(c) {
+        UI.say('Invoice for ' + c.name + '. Add first item:', { delay: 300, replies: D.items.slice(0, 3).map(function (it) { return { label: it.name, action: function () { invQty(c, it); } }; }), wa: true });
+      }
+      function invQty(c, item) {
+        UI.say('Quantity (per ' + item.unit + ')?', { delay: 250, replies: [1, 2, 5, 10].map(function (n) { return { label: 'x' + n, action: function () { invConfirm(c, item, n); } }; }), wa: true });
+      }
+      function invConfirm(c, item, qty) {
+        var line = qty * item.price, vat = Math.round(line * 0.16), total = line + vat;
+        UI.say('Ready to send. Confirm?', { delay: 400,
+          cards: [{ kind: 'invoice', data: { id: 'INV-2026-0152', customer: c.name, items: [{ name: item.name, qty: qty, line: line }], vat: vat, total: total, status: 'pending' }}],
+          replies: [{ label: 'Confirm & send to KRA', cls: 'primary', action: function () { invSent(c.name, 'INV-2026-0152', total); } }, { label: 'Cancel', action: mainMenu }], wa: true
+        });
+      }
+      function invSent(cust, invId, total) {
+        UI.say(invId + ' submitted to KRA eTIMS.', { delay: 600,
+          cards: [{ kind: 'status', data: { title: invId, sub: cust, cls: 'pending', tag: 'Pending', rows: [{ k: 'Amount', v: D.fmtKES(total) }], note: 'eTIMS serial assigned.' }}],
+          replies: [{ label: 'Mark fulfilled', cls: 'primary', action: function () { invPaid(invId, cust, total); } }, { label: 'Main menu', action: mainMenu }], wa: true
+        });
+      }
+      function invPaid(invId, cust, total) {
+        UI.say('Fulfilled. M-Pesa payment confirmed.', { delay: 500,
+          cards: [{ kind: 'receipt', data: { title: 'Payment received', sub: invId + ' — ' + cust, mpesa: 'QGK92K3M1P', amount: total, etims: 'ETI-2026-01453' }}]
+        });
+        setTimeout(function () { UI.say('Anything else?', { delay: 500, replies: quickMenu(), wa: true }); }, 800);
+      }
+
+      /* reports */
+      function salesReport() {
+        UI.say('Which report?', { delay: 300, replies: [
+          { label: 'This week', action: weekReport },
+          { label: 'This month', action: monthReport },
+          { label: 'Profit & Loss', action: pAndL }
+        ], wa: true });
+      }
+      function weekReport() {
+        UI.say('Sales this week.', { delay: 500,
+          cards: [{ kind: 'report', data: { title: 'Sales — Sep 8 to 14', rows: [{ name: 'Cement', amount: 136000 }, { name: 'GI Iron Sheet', amount: 230000 }, { name: 'PVC Pipe', amount: 14400 }], total: D.week.amount, note: D.week.count + ' items sold.' }}],
+          replies: [{ label: 'Profit & Loss', action: pAndL }, { label: 'Main menu', action: mainMenu }], wa: true
+        });
+      }
+      function monthReport() {
+        UI.say('September to date.', { delay: 500,
+          cards: [{ kind: 'report', data: { title: 'Sales — Sep 1 to 14', rows: D.items.map(function (it, i) { return { name: it.name, amount: [1520000, 1280000, 41000, 42000, 39000, 9200][i] }; }), total: D.month.amount, note: D.month.count + ' items sold.' }}],
+          replies: [{ label: 'Profit & Loss', action: pAndL }, { label: 'Main menu', action: mainMenu }], wa: true
+        });
+      }
+      function pAndL() {
+        UI.say('Profit & Loss.', { delay: 600,
+          cards: [{ kind: 'profit', data: { period: 'Sep 1–14, 2026', revenue: D.profit.revenue, cogs: D.profit.cogs, expenses: D.profit.expenses, net: D.profit.revenue - D.profit.cogs - D.profit.expenses, margin: D.profit.margin, proj: 'KES 9,500,000' }}],
+          replies: [{ label: 'Share PDF', action: function () { UI.say('PDF report generated, will send it here shortly.', { delay: 500, replies: [{ label: 'Main menu', action: mainMenu }], wa: true }); } }, { label: 'Main menu', action: mainMenu }], wa: true
+        });
+      }
+
+      /* stock */
+      function stockAlert() {
+        UI.say('Stock today:', { delay: 500,
+          cards: [{ kind: 'stock', data: { title: 'Stock today', rows: D.items.map(function (it) { return { name: it.name, stock: it.stock, unit: it.unit, min: it.min }; }), note: 'Nails 3" below minimum — suggest restock.' }}],
+          replies: [{ label: 'Restock nails', action: function () { restock(); } }, { label: 'Main menu', action: mainMenu }], wa: true
+        });
+      }
+      function restock() {
+        UI.say('Restock order (100 kg Nails 3") sent to Mabati Rolling Mills.', { delay: 600,
+          cards: [{ kind: 'status', data: { title: 'Restock request', sub: 'Mabati Rolling Mills', cls: 'pending', tag: 'Sent', rows: [{ k: 'Qty', v: '100 kg' }, { k: 'Amount', v: D.fmtKES(19000) }], note: 'Delivery in 3 days.' }}],
+          replies: [{ label: 'Main menu', action: mainMenu }], wa: true
+        });
+      }
+
+      /* customers */
+      function customerLookup() {
+        UI.say('Which customer?', { delay: 300, replies: D.customers.map(function (c) { return { label: c.name, action: function () { showCust(c); } }; }).concat([{ label: 'Main menu', action: mainMenu }]), wa: true });
+      }
+      function showCust(c) {
+        UI.say('Customer found:', { delay: 400,
+          cards: [{ kind: 'customer', data: { name: c.name, tin: c.tin, phone: c.phone, email: c.email, purchases: parseInt(String(c.purchases).replace(/[^0-9]/g, ''), 10) || 0, last: 'INV-2026-0148' }}],
+          replies: [{ label: 'Send payment request', action: function () { UI.say('A payment request will be sent to ' + c.name + ' via M-Pesa.', { delay: 400, replies: [{ label: 'Main menu', action: mainMenu }], wa: true }); } }, { label: 'Main menu', action: mainMenu }], wa: true
+        });
+      }
+
+      /* tax */
+      function taxFiling() {
+        UI.say('VAT return due ' + D.vat.due + '.', { delay: 400,
+          cards: [{ kind: 'tax', data: { title: 'VAT return — ' + D.vat.period, dueLabel: D.vat.due, period: 'Jul 1 – Aug 31, 2026', amount: D.vat.amount, note: 'eTIMS data synced. File before ' + D.vat.due + '.' }}],
+          replies: [{ label: 'File return', cls: 'primary', action: function () { fileReturn(); } }, { label: 'View notice', action: function () { notices(); } }, { label: 'Main menu', action: mainMenu }], wa: true
+        });
+      }
+      function fileReturn() {
+        UI.say('Filing VAT return...', { delay: 900 });
+        setTimeout(function () {
+          UI.say('Filed.', { delay: 500,
+            cards: [{ kind: 'status', data: { title: 'VAT filed', sub: D.vat.period, cls: 'fulfilled', tag: 'Filed', rows: [{ k: 'Receipt', v: 'RAA-7248391' }, { k: 'Paid', v: D.fmtKES(D.vat.amount) }], note: 'Receipt in your eTIMS portal.' }}],
+            replies: [{ label: 'Main menu', action: mainMenu }], wa: true
+          });
+        }, 1500);
+      }
+      function notices() {
+        UI.say('KRA notices:', { delay: 400, cards: DEMO.notices.map(function (n) { return { kind: 'notice', data: { title: n.title, from: n.by, date: n.date, body: 'Review stock figures before filing. Reply STOCK to check.', link: 'etims.kra.go.ke' } }; }), replies: [{ label: 'Main menu', action: mainMenu }], wa: true });
+      }
+
+      /* storefront */
+      function storeFront() {
+        UI.say('Your storefront at ' + D.store.url + ' has new orders.', { delay: 400,
+          cards: [{ kind: 'store', data: { title: 'Storefront', url: D.store.url, orders: D.store.orders, link: D.store.url }}],
+          replies: [{ label: 'Confirm order', action: function () { confirmOrder(); } }, { label: 'Share link', action: function () { UI.user('Sharing ' + D.store.url); UI.say('Link shared to your customers.', { delay: 400, replies: [{ label: 'Main menu', action: mainMenu }], wa: true }); } }, { label: 'Main menu', action: mainMenu }], wa: true
+        });
+      }
+      function confirmOrder() {
+        UI.say('Order confirmed — invoice + eTIMS receipt generated.', { delay: 600,
+          cards: [{ kind: 'status', data: { title: 'Order confirmed', sub: 'Diana Wambui', cls: 'fulfilled', tag: 'Paid', rows: [{ k: 'Item', v: 'GI Iron Sheet x 20' }, { k: 'Amount', v: D.fmtKES(23000) }, { k: 'Payment', v: 'M-Pesa' }], note: 'Receipt: ETI-2026-01454.' }}],
+          replies: [{ label: 'Main menu', action: mainMenu }], wa: true
+        });
+      }
+
+    })();
+  </script>
+
+</body>
+</html>

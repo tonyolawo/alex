@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alex — Chat Mockups</title>
+  <link rel="stylesheet" href="css/theme-fintech.css" />
+  <link rel="stylesheet" href="css/theme-casual.css" />
+  <link rel="stylesheet" href="css/chat-base.css" />
+  <style>
+    body.page { padding: 24px 18px; align-items: flex-start; }
+    .hub-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .hub-head .h1-wrap h1 { margin: 0; }
+    .hub-head .h1-wrap p { margin: 6px 0 0; }
+    .hub-card .hc-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; color: #fff; }
+    .hc-icon.wa   { background: #25d366; }
+    .hc-icon.tg   { background: #2aabee; }
+    .hc-icon.sms  { background: #4a5568; }
+    .hc-icon.web  { background: var(--primary); }
+    .hc-icon.mob  { background: var(--accent); }
+    .hub-footer { max-width: 980px; width: 100%; padding: 8px 0 20px; }
+    .hub-footer p { font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body class="page">
+
+  <div class="hub-head">
+    <div class="h1-wrap">
+      <h1>Alex — chat mockups</h1>
+      <p>Five-channel chat app for small business finance. Interactive demos with sample data.</p>
+    </div>
+    <button class="theme-toggle" id="themeToggle">Switch: Casual theme</button>
+  </div>
+
+  <div class="hub-grid">
+
+    <a class="hub-card" href="channels/web.html">
+      <div class="hc-icon web">W</div>
+      <span class="hc-tag">Standalone</span>
+      <h3>Web chat</h3>
+      <p>Full browser chat with sidebar dashboard, KPIs, recent invoices, and live conversation.</p>
+    </a>
+
+    <a class="hub-card" href="channels/mobile.html">
+      <div class="hc-icon mob">M</div>
+      <span class="hc-tag">Standalone</span>
+      <h3>Mobile app</h3>
+      <p>Mobile-first chat UI. Push-style notifications, quick reply chips, and streamlined flows.</p>
+    </a>
+
+    <a class="hub-card" href="channels/whatsapp.html">
+      <div class="hc-icon wa">WA</div>
+      <span class="hc-tag">Integration</span>
+      <h3>WhatsApp</h3>
+      <p>Interactive buttons, numbered menus, read receipts, and WhatsApp-native conversation style.</p>
+    </a>
+
+    <a class="hub-card" href="channels/telegram.html">
+      <div class="hc-icon tg">TG</div>
+      <span class="hc-tag">Integration</span>
+      <h3>Telegram</h3>
+      <p>Bot commands, inline keyboards, deep links, and rich card layouts.</p>
+    </a>
+
+    <a class="hub-card" href="channels/sms.html">
+      <div class="hc-icon sms">SMS</div>
+      <span class="hc-tag">Integration</span>
+      <h3>SMS</h3>
+      <p>Text-only numbered menus, keyword commands, and short-link responses for feature reach.</p>
+    </a>
+
+  </div>
+
+  <div class="hub-footer">
+    <p>All data shown is simulated. The demo covers invoicing, sales reports, stock alerts, customer lookup, tax compliance (KRA eTIMS), and storefront orders.</p>
+  </div>
+
+  <script src="data/demo.js"></script>
+  <script src="js/chat-ui.js"></script>
+  <script>
+    setTheme(currentTheme());
+  </script>
+
+</body>
+</html>
