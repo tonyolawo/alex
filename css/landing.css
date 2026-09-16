@@ -764,6 +764,10 @@ section[id] {
   display: inline-block;
 }
 
+.waitlist-success[hidden] {
+  display: none;
+}
+
 /* ---------- 16. footer ---------- */
 .lp-footer {
   background: #12201c;
