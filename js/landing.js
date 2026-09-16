@@ -96,13 +96,6 @@
      -------------------------------------------------------- */
   var form = document.getElementById('waitlistForm');
 
-  function formatPhone(digits) {
-    if (digits.length === 10) {
-      return digits.slice(0, 4) + ' ' + digits.slice(4, 7) + ' ' + digits.slice(7);
-    }
-    return digits;
-  }
-
   function validatePhone(raw) {
     var stripped = raw.replace(/[\s\-()]/g, '');
     var digits;
@@ -168,7 +161,6 @@
 
       clearError();
       var successBox = document.getElementById('successBox');
-      var successPhone = document.getElementById('successPhone');
 
       var formData = new FormData();
       formData.append('access_key', 'd4eaf735-8a8e-40a6-8c89-3a3f140a51b0');
@@ -184,7 +176,6 @@
         .then(function (data) {
           if (data && data.success) {
             form.style.display = 'none';
-            if (successPhone) successPhone.textContent = formatPhone(digits);
             if (successBox) successBox.removeAttribute('hidden');
           } else {
             showError('Something went wrong. Please try again.');
