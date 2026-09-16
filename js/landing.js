@@ -1,4 +1,4 @@
-/**
+﻿/**
  * landing.js - Static landing-page interactions for Alex.
  * No build step. Plain ES5-compatible, file:// safe.
  */
@@ -148,8 +148,10 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var name = document.getElementById('wlName');
+      var email = document.getElementById('wlEmail');
       var phone = document.getElementById('wlPhone');
       var nameVal = name ? name.value.trim() : '';
+      var emailVal = email ? email.value.trim() : '';
       var phoneVal = phone ? phone.value.trim() : '';
       var digits = validatePhone(phoneVal);
 
@@ -158,23 +160,39 @@
         return;
       }
 
-      clearError();
-      form.style.display = 'none';
-      var successBox = document.getElementById('successBox');
-      var successPhone = document.getElementById('successPhone');
-      if (successPhone) successPhone.textContent = formatPhone(digits);
-      if (successBox) {
-        successBox.removeAttribute('hidden');
+      var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
+      if (!emailOk) {
+        showError('Please enter a valid email address.');
+        return;
       }
 
-      // TODO: POST waitlist entry to backend API (name, phone) when integration is ready
-      // fetch('/api/waitlist', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ name: nameVal, phone: phoneVal })
-      // }).then(function (r) { return r.json(); })
-      //   .then(function (d) { console.log('Waitlist saved', d); })
-      //   .catch(function (err) { console.error('Waitlist save failed', err); });
+      clearError();
+      var successBox = document.getElementById('successBox');
+      var successPhone = document.getElementById('successPhone');
+
+      var formData = new FormData();
+      formData.append('access_key', 'd4eaf735-8a8e-40a6-8c89-3a3f140a51b0');
+      formData.append('name', nameVal);
+      formData.append('email', emailVal);
+      formData.append('phone', phoneVal);
+      formData.append('from_name', 'Alex waitlist');
+      formData.append('subject', 'New Alex waitlist signup');
+      formData.append('botcheck', '');
+
+      fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data && data.success) {
+            form.style.display = 'none';
+            if (successPhone) successPhone.textContent = formatPhone(digits);
+            if (successBox) successBox.removeAttribute('hidden');
+          } else {
+            showError('Something went wrong. Please try again.');
+          }
+        })
+        .catch(function () {
+          showError('Could not reach the server. Please try again.');
+        });
     });
   }
 
