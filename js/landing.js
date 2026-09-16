@@ -109,6 +109,10 @@
     /* Strip international prefix 254 */
     if (digits.indexOf('254') === 0 && digits.length >= 12) {
       digits = digits.substring(3);
+      /* +2547xx... -> 07xx... local form */
+      if (digits.length === 9 && (digits.charAt(0) === '7' || digits.charAt(0) === '1')) {
+        digits = '0' + digits;
+      }
     }
     /* Local form: 07xx (10 digits) or 01xx (10 digits) */
     if (digits.length === 10 && digits.charAt(0) === '0') {
@@ -149,7 +153,7 @@
       var digits = validatePhone(phoneVal);
 
       if (!nameVal || !digits) {
-        showError('Please enter a valid name and phone number, e.g. 0712 345 678.');
+        showError('Please enter a valid name and phone number, e.g. 0757 460 573 or +254 757 460 573.');
         return;
       }
 
