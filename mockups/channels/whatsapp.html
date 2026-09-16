@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Alex — WhatsApp Chat</title>
+  <title>Alex | WhatsApp Chat</title>
   <link rel="stylesheet" href="../css/theme-fintech.css" />
   <link rel="stylesheet" href="../css/theme-casual.css" />
   <link rel="stylesheet" href="../css/chat-base.css" />
@@ -28,9 +28,19 @@
     .chat-input input { border: none; background: #fff; border-radius: 10px; }
     .chat-input .send { background: #25d366; color: #fff; border-radius: 10px; width: auto; padding: 0 14px; font-size: 13px; font-weight: 700; height: 40px; }
     .quick-replies.wa .qr.primary { background: #25d366; color: #fff; }
+    .demo-back {
+      position: fixed; top: 12px; left: 12px; z-index: 999;
+      background: var(--surface); border: 1px solid var(--primary);
+      color: var(--primary); border-radius: 999px;
+      padding: 7px 14px; font-size: 13px; font-weight: 600;
+      text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      font-family: var(--font);
+    }
+    .demo-back:hover { background: var(--primary-soft); }
   </style>
 </head>
 <body class="page">
+<a class="demo-back" href="../index.html">Back to demo home</a>
 
   <div class="app">
 
@@ -122,7 +132,7 @@
       }
       function invPaid(invId, cust, total) {
         UI.say('Fulfilled. M-Pesa payment confirmed.', { delay: 500,
-          cards: [{ kind: 'receipt', data: { title: 'Payment received', sub: invId + ' — ' + cust, mpesa: 'QGK92K3M1P', amount: total, etims: 'ETI-2026-01453' }}]
+          cards: [{ kind: 'receipt', data: { title: 'Payment received', sub: invId + ' · ' + cust, mpesa: 'QGK92K3M1P', amount: total, etims: 'ETI-2026-01453' }}]
         });
         setTimeout(function () { UI.say('Anything else?', { delay: 500, replies: quickMenu(), wa: true }); }, 800);
       }
@@ -137,13 +147,13 @@
       }
       function weekReport() {
         UI.say('Sales this week.', { delay: 500,
-          cards: [{ kind: 'report', data: { title: 'Sales — Sep 8 to 14', rows: [{ name: 'Cement', amount: 136000 }, { name: 'GI Iron Sheet', amount: 230000 }, { name: 'PVC Pipe', amount: 14400 }], total: D.week.amount, note: D.week.count + ' items sold.' }}],
+          cards: [{ kind: 'report', data: { title: 'Sales, Sep 8 to 14', rows: [{ name: 'Cement', amount: 136000 }, { name: 'GI Iron Sheet', amount: 230000 }, { name: 'PVC Pipe', amount: 14400 }], total: D.week.amount, note: D.week.count + ' items sold.' }}],
           replies: [{ label: 'Profit & Loss', action: pAndL }, { label: 'Main menu', action: mainMenu }], wa: true
         });
       }
       function monthReport() {
         UI.say('September to date.', { delay: 500,
-          cards: [{ kind: 'report', data: { title: 'Sales — Sep 1 to 14', rows: D.items.map(function (it, i) { return { name: it.name, amount: [1520000, 1280000, 41000, 42000, 39000, 9200][i] }; }), total: D.month.amount, note: D.month.count + ' items sold.' }}],
+          cards: [{ kind: 'report', data: { title: 'Sales, Sep 1 to 14', rows: D.items.map(function (it, i) { return { name: it.name, amount: [1520000, 1280000, 41000, 42000, 39000, 9200][i] }; }), total: D.month.amount, note: D.month.count + ' items sold.' }}],
           replies: [{ label: 'Profit & Loss', action: pAndL }, { label: 'Main menu', action: mainMenu }], wa: true
         });
       }
@@ -157,7 +167,7 @@
       /* stock */
       function stockAlert() {
         UI.say('Stock today:', { delay: 500,
-          cards: [{ kind: 'stock', data: { title: 'Stock today', rows: D.items.map(function (it) { return { name: it.name, stock: it.stock, unit: it.unit, min: it.min }; }), note: 'Nails 3" below minimum — suggest restock.' }}],
+          cards: [{ kind: 'stock', data: { title: 'Stock today', rows: D.items.map(function (it) { return { name: it.name, stock: it.stock, unit: it.unit, min: it.min }; }), note: 'Nails 3" below minimum, suggest restock.' }}],
           replies: [{ label: 'Restock nails', action: function () { restock(); } }, { label: 'Main menu', action: mainMenu }], wa: true
         });
       }
@@ -182,7 +192,7 @@
       /* tax */
       function taxFiling() {
         UI.say('VAT return due ' + D.vat.due + '.', { delay: 400,
-          cards: [{ kind: 'tax', data: { title: 'VAT return — ' + D.vat.period, dueLabel: D.vat.due, period: 'Jul 1 – Aug 31, 2026', amount: D.vat.amount, note: 'eTIMS data synced. File before ' + D.vat.due + '.' }}],
+          cards: [{ kind: 'tax', data: { title: 'VAT return for ' + D.vat.period, dueLabel: D.vat.due, period: 'Jul 1 – Aug 31, 2026', amount: D.vat.amount, note: 'eTIMS data synced. File before ' + D.vat.due + '.' }}],
           replies: [{ label: 'File return', cls: 'primary', action: function () { fileReturn(); } }, { label: 'View notice', action: function () { notices(); } }, { label: 'Main menu', action: mainMenu }], wa: true
         });
       }
@@ -207,7 +217,7 @@
         });
       }
       function confirmOrder() {
-        UI.say('Order confirmed — invoice + eTIMS receipt generated.', { delay: 600,
+        UI.say('Order confirmed. Invoice + eTIMS receipt generated.', { delay: 600,
           cards: [{ kind: 'status', data: { title: 'Order confirmed', sub: 'Diana Wambui', cls: 'fulfilled', tag: 'Paid', rows: [{ k: 'Item', v: 'GI Iron Sheet x 20' }, { k: 'Amount', v: D.fmtKES(23000) }, { k: 'Payment', v: 'M-Pesa' }], note: 'Receipt: ETI-2026-01454.' }}],
           replies: [{ label: 'Main menu', action: mainMenu }], wa: true
         });

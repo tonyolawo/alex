@@ -1,5 +1,5 @@
 /**
- * landing.js — Static landing-page interactions for Alex.
+ * landing.js - Static landing-page interactions for Alex.
  * No build step. Plain ES5-compatible, file:// safe.
  */
 (function () {
@@ -121,7 +121,7 @@
     if (digits.length === 10 && digits.charAt(0) === '0') {
       return digits;
     }
-    /* Already 10 digits not starting with 0 — accept if >= 10 total */
+    /* Already 10 digits not starting with 0 - accept if >= 10 total */
     if (digits.length >= 10) {
       return digits;
     }

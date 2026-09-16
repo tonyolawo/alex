@@ -1,4 +1,4 @@
-/* Alex — demo data for mockups (Kenyan SMB) */
+/* Alex - demo data for mockups (Kenyan SMB) */
 window.DEMO = {
   app: { name: "Alex", assistant: "Alex" },
   business: {

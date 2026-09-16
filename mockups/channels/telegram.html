@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Alex — Telegram Chat</title>
+  <title>Alex | Telegram Chat</title>
   <link rel="stylesheet" href="../css/theme-fintech.css" />
   <link rel="stylesheet" href="../css/theme-casual.css" />
   <link rel="stylesheet" href="../css/chat-base.css" />
@@ -21,9 +21,19 @@
     .chat-input { background: #f0f0f0; border-top-color: #e0e0e0; }
     .chat-input input { border: none; background: #fff; border-radius: 10px; }
     .chat-input .send { background: #2aabee; color: #fff; border-radius: 10px; width: auto; padding: 0 16px; font-size: 13px; height: 40px; }
+    .demo-back {
+      position: fixed; top: 12px; left: 12px; z-index: 999;
+      background: var(--surface); border: 1px solid var(--primary);
+      color: var(--primary); border-radius: 999px;
+      padding: 7px 14px; font-size: 13px; font-weight: 600;
+      text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      font-family: var(--font);
+    }
+    .demo-back:hover { background: var(--primary-soft); }
   </style>
 </head>
 <body class="page">
+<a class="demo-back" href="../index.html">Back to demo home</a>
 
   <div class="app">
 
@@ -85,12 +95,12 @@
         UI.say('Main menu.', { delay: 300, tg: kbMenu() });
       }
       function mainMenu() {
-        UI.say('Main menu — tap an option.', { delay: 300, tg: kbMenu() });
+        UI.say('Main menu. Tap an option.', { delay: 300, tg: kbMenu() });
       }
 
       /* invoice */
       function createInvoice() {
-        UI.say('Invoice creation — step 1: who is the customer?', { delay: 300,
+        UI.say('Invoice creation, step 1: who is the customer?', { delay: 300,
           tg: [[{ label: 'Bora Builders Ltd', action: function () { invItems('Bora Builders Ltd'); } }],
               [{ label: 'Faith Njoroge', action: function () { invItems('Faith Njoroge'); } }],
               [{ label: 'Kijabe Traders', action: function () { invItems('Kijabe Traders'); } }],
@@ -98,7 +108,7 @@
         });
       }
       function invItems(cust) {
-        UI.say('Invoice for **' + cust + '** — step 2: pick an item.', { delay: 300,
+        UI.say('Invoice for **' + cust + '**, step 2: pick an item.', { delay: 300,
           tg: [[{ label: 'Cement (50kg bag)', action: function () { invQty(cust, D.items[0]); } }],
               [{ label: 'GI Iron Sheet', action: function () { invQty(cust, D.items[1]); } }],
               [{ label: 'PVC Pipe 6m', action: function () { invQty(cust, D.items[4]); } }],
@@ -126,7 +136,7 @@
       }
       function invPaid(invId, cust, total) {
         UI.say('Fulfilled. Payment received.', { delay: 500,
-          cards: [{ kind: 'receipt', data: { title: 'Payment received', sub: invId + ' — ' + cust, mpesa: 'QGK72K3M1Q', amount: total, etims: 'ETI-2026-01455' }}]
+          cards: [{ kind: 'receipt', data: { title: 'Payment received', sub: invId + ' · ' + cust, mpesa: 'QGK72K3M1Q', amount: total, etims: 'ETI-2026-01455' }}]
         });
         setTimeout(function () { UI.say('Anything else?', { delay: 500, tg: kbMenu() }); }, 800);
       }
@@ -139,14 +149,14 @@
         });
       }
       function weekReport() {
-        UI.say('Sales — this week.', { delay: 500,
-          cards: [{ kind: 'report', data: { title: 'Sales — Sep 8 to 14', rows: [{ name: 'Cement', amount: 136000 }, { name: 'GI Iron Sheet', amount: 230000 }, { name: 'PVC Pipe', amount: 14400 }], total: D.week.amount, note: D.week.count + ' items sold.' }}],
+        UI.say('Sales this week.', { delay: 500,
+          cards: [{ kind: 'report', data: { title: 'Sales, Sep 8 to 14', rows: [{ name: 'Cement', amount: 136000 }, { name: 'GI Iron Sheet', amount: 230000 }, { name: 'PVC Pipe', amount: 14400 }], total: D.week.amount, note: D.week.count + ' items sold.' }}],
           tg: [[{ label: 'Profit & Loss', action: pAndL }, { label: 'Main menu', action: mainMenu }]]
         });
       }
       function monthReport() {
         UI.say('September to date.', { delay: 500,
-          cards: [{ kind: 'report', data: { title: 'Sales — Sep 1 to 14', rows: D.items.map(function (it, i) { return { name: it.name, amount: [1520000, 1280000, 41000, 42000, 39000, 9200][i] }; }), total: D.month.amount, note: D.month.count + ' items sold.' }}],
+          cards: [{ kind: 'report', data: { title: 'Sales, Sep 1 to 14', rows: D.items.map(function (it, i) { return { name: it.name, amount: [1520000, 1280000, 41000, 42000, 39000, 9200][i] }; }), total: D.month.amount, note: D.month.count + ' items sold.' }}],
           tg: [[{ label: 'Profit & Loss', action: pAndL }, { label: 'Main menu', action: mainMenu }]]
         });
       }
@@ -188,7 +198,7 @@
       /* tax */
       function taxFiling() {
         UI.say('Your VAT return for ' + D.vat.period + ' is due on ' + D.vat.due + '.', { delay: 400,
-          cards: [{ kind: 'tax', data: { title: 'VAT return — ' + D.vat.period, dueLabel: D.vat.due, period: 'Jul 1 – Aug 31, 2026', amount: D.vat.amount, note: 'eTIMS data synced locally.' }}],
+          cards: [{ kind: 'tax', data: { title: 'VAT return for ' + D.vat.period, dueLabel: D.vat.due, period: 'Jul 1 – Aug 31, 2026', amount: D.vat.amount, note: 'eTIMS data synced locally.' }}],
           tg: [[{ label: 'File now', action: function () { fileReturn(); } }, { label: 'Notices', action: function () { notices(); } }],
               [{ label: 'Main menu', action: mainMenu }]]
         });
@@ -215,7 +225,7 @@
         });
       }
       function confirmOrder() {
-        UI.say('Order confirmed — invoice + eTIMS receipt generated.', { delay: 600,
+        UI.say('Order confirmed. Invoice + eTIMS receipt generated.', { delay: 600,
           cards: [{ kind: 'status', data: { title: 'Order confirmed', sub: 'Diana Wambui', cls: 'fulfilled', tag: 'Paid', rows: [{ k: 'Item', v: 'GI Iron Sheet x 20' }, { k: 'Amount', v: D.fmtKES(23000) }, { k: 'Payment', v: 'M-Pesa' }], note: 'Receipt: ETI-2026-01456.' }}],
           tg: [[{ label: 'Main menu', action: mainMenu }]]
         });

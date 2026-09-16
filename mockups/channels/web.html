@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Alex — Web Chat</title>
+  <title>Alex | Web Chat</title>
   <link rel="stylesheet" href="../css/theme-fintech.css" />
   <link rel="stylesheet" href="../css/theme-casual.css" />
   <link rel="stylesheet" href="../css/chat-base.css" />
@@ -30,9 +30,19 @@
       .layout-split .app-side { display: none; }
       .layout-split .app { border-radius: var(--radius-lg); max-width: 100%; }
     }
+    .demo-back {
+      position: fixed; top: 12px; left: 12px; z-index: 999;
+      background: var(--surface); border: 1px solid var(--primary);
+      color: var(--primary); border-radius: 999px;
+      padding: 7px 14px; font-size: 13px; font-weight: 600;
+      text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      font-family: var(--font);
+    }
+    .demo-back:hover { background: var(--primary-soft); }
   </style>
 </head>
 <body class="page">
+<a class="demo-back" href="../index.html">Back to demo home</a>
 
   <div class="layout-split">
 
@@ -62,7 +72,7 @@
 
       <div class="side-section">
         <div class="side-title">Stock alert</div>
-        <div class="low-stock">Nails 3" — <b>45 kg</b> remaining</div>
+        <div class="low-stock">Nails 3", <b>45 kg</b> remaining</div>
       </div>
     </div>
 
@@ -125,7 +135,7 @@
       }
 
       UI.pill('Today');
-      UI.say('Welcome back, Amina. Rainbow Hardware — what would you like to do?', {
+      UI.say('Welcome back, Amina. Rainbow Hardware. What would you like to do?', {
         cards: [
           { kind: 'menu', data: {
             title: 'Main menu',
@@ -164,7 +174,7 @@
       function pickCustomer(c) {
         UI.say('Customer: **' + c.name + '**\nPick items to add.', { delay: 300, replies: D.items.filter(function (it){ return it.unit !== 'kg' || it.stock < 60; }).slice(0,4).map(function (it) {
           return { label: it.name, action: function () { pickQty(c, it, 1); } };
-        }).concat([{ label: 'Done — confirm', action: function () { invoiceConfirm(c, [{name:'Cement (50kg bag)', qty:20, price:680, unit:'bag'}]); } }])
+        }).concat([{ label: 'Done and confirm', action: function () { invoiceConfirm(c, [{name:'Cement (50kg bag)', qty:20, price:680, unit:'bag'}]); } }])
         });
       }
       function pickQty(c, item, qty) {
@@ -195,7 +205,7 @@
       }
       function invoiceFulfilled(invId, customer, total) {
         UI.say(invId + ' marked as fulfilled. MPesa payment received.', { delay: 500,
-          cards: [{ kind: 'receipt', data: { title: 'Payment received', sub: invId + ' — ' + customer, mpesa: 'QGH7K3B4X9', amount: total, etims: 'ETI-2026-' + (10000 + Math.floor(Math.random()*9000)) }}]
+          cards: [{ kind: 'receipt', data: { title: 'Payment received', sub: invId + ' · ' + customer, mpesa: 'QGH7K3B4X9', amount: total, etims: 'ETI-2026-' + (10000 + Math.floor(Math.random()*9000)) }}]
         });
         UI.say('Anything else?', { delay: 600, replies: quickMenu() });
       }
@@ -211,7 +221,7 @@
       function reportWeek() {
         UI.say('Here is your sales summary for this week.', { delay: 500,
           cards: [{ kind: 'report', data: {
-            title: 'Sales — this week (Sep 8–14)',
+            title: 'Sales this week (Sep 8–14)',
             rows: [
               { name: 'Cement (50kg bag)', amount: 136000 },
               { name: 'GI Iron Sheet', amount: 230000 },
@@ -227,7 +237,7 @@
       function reportMonth() {
         UI.say('Monthly summary through Sep 14.', { delay: 500,
           cards: [{ kind: 'report', data: {
-            title: 'Sales — Sep 1 to 14',
+            title: 'Sales, Sep 1 to 14',
             rows: D.items.map(function (it){ return { name: it.name, amount: Math.round(D.month.amount * (it.price / 12000)) }; }),
             total: D.month.amount,
             note: D.month.count + ' items sold this month so far.'
@@ -281,7 +291,7 @@
       /* ---------- tax ---------- */
       function taxFiling() {
         UI.say('Your VAT return for ' + D.vat.period + ' is due on **' + D.vat.due + '**.', { delay: 400,
-          cards: [{ kind: 'tax', data: { title: 'VAT return — ' + D.vat.period, dueLabel: D.vat.due, period: D.vat.period + ' (Jul 1 – Aug 31, 2026)', amount: D.vat.amount, note: 'eTIMS data automatically synced.' }}],
+          cards: [{ kind: 'tax', data: { title: 'VAT return, ' + D.vat.period, dueLabel: D.vat.due, period: D.vat.period + ' (Jul 1 – Aug 31, 2026)', amount: D.vat.amount, note: 'eTIMS data automatically synced.' }}],
           replies: [
             { label: 'File return', cls: 'primary', action: function () { taxFileReturn(); } },
             { label: 'View KRA notice', action: function () { taxNotice(); } },

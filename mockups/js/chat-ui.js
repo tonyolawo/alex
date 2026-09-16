@@ -1,4 +1,4 @@
-/* Alex — chat mockup engine */
+/* Alex - chat mockup engine */
 (function () {
   'use strict';
 
@@ -132,7 +132,7 @@
         h = '<div class="card-head"><div><div class="card-title">' + esc(d.title || 'Store front') + '</div>' +
           '<div class="card-sub">' + esc(d.url || '') + '</div></div></div>'
           + (d.orders ? d.orders.map(function (o) {
-            return row(o.customer + ' — ' + o.item, null, DEMO.fmtKES(o.amount)) + '<div class="card-sub" style="margin-top:-6px">' +
+            return row(o.customer + ' · ' + o.item, null, DEMO.fmtKES(o.amount)) + '<div class="card-sub" style="margin-top:-6px">' +
               (o.status === 'new' ? badge('pending', 'New order') : badge('muted', 'Pending')) + '</div>';
           }).join('') : '')
           + (d.link ? '<div class="link-chip" data-url="' + esc(d.link) + '">Open ' + esc(d.link) + '</div>' : '');

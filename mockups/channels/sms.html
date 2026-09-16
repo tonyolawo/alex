@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Alex — SMS Chat</title>
+  <title>Alex | SMS Chat</title>
   <link rel="stylesheet" href="../css/theme-fintech.css" />
   <link rel="stylesheet" href="../css/theme-casual.css" />
   <link rel="stylesheet" href="../css/chat-base.css" />
@@ -32,16 +32,26 @@
     .chat-input .send { background: #5c6bc0; color: #fff; border-radius: 8px; width: auto; padding: 0 14px; font-size: 13px; height: 40px; }
     .sms-choices { max-width: 95%; }
     body.sms-msg { font-family: Consolas, Menlo, monospace; }
+    .demo-back {
+      position: fixed; top: 12px; left: 12px; z-index: 999;
+      background: var(--surface); border: 1px solid var(--primary);
+      color: var(--primary); border-radius: 999px;
+      padding: 7px 14px; font-size: 13px; font-weight: 600;
+      text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      font-family: var(--font);
+    }
+    .demo-back:hover { background: var(--primary-soft); }
   </style>
 </head>
 <body class="page">
+  <a class="demo-back" href="../index.html">Back to demo home</a>
 
   <div class="app">
 
     <div class="chat-header">
       <div class="avatar">A</div>
       <div class="identity">
-        <div class="name">Alex — SMS</div>
+        <div class="name">Alex | SMS</div>
         <div class="state">+254 721 000 111 · free to reach 5 Free</div>
       </div>
       <div class="header-actions">
@@ -187,7 +197,7 @@
 
       /* stock */
       function stockAlert() {
-        UI.say('Stock <50 units:\n1 Nails 3" — 45 kg LOW\nAll other items OK.\nReply: 1 Restock, 2 Menu', { delay: 500,
+        UI.say('Stock <50 units:\n1 Nails 3", 45 kg LOW\nAll other items OK.\nReply: 1 Restock, 2 Menu', { delay: 500,
           sms: [
             { label: 'Restock', num: '1', action: function () { restock(); } },
             { label: 'Menu', num: '2', action: mainMenu }
